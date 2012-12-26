@@ -1,0 +1,84 @@
+<%
+# Cycling through nodes is done with a local variable named "n"
+# The host used for a node is fqdn, always
+# 
+# A word about host_groups and check_mk tags
+# Nagios, originally presented the host_groups to ease on editing.
+# Check_MK has a similar feature called tags.
+# Machines don't need these so we're using fqdn for most configurations
+# like checks and check_parameters.
+
+# main.mk is a python file, these special words don't need string presentation
+SPECIAL_WORDS = ["None", "True", "False"]
+
+def prepare_print(arg)
+  # Wrap string as python code strings, avoid numbers and or special words
+  arg = Integer(arg) if Integer(arg) rescue arg
+  SPECIAL_WORDS.include?(arg) || arg.is_a?(Integer) ? arg : "\"#{arg}\""
+end
+
+def build_args(args)
+  # args are expected to be a Hash
+  args.sort_by { |k, _| k }.
+    map { |_, e| prepare_print(e) }.join(', ')
+end
+
+def has_config(n, conf)
+  n['check_mk'] and n['check_mk']['config'] and n['check_mk']['config'][conf]
+end
+
+@extra_service_conf = {}
+def add_extra_service_conf(conf, params)
+  @extra_service_conf[conf] = Array.new unless @extra_service_conf[conf]
+  @extra_service_conf[conf].push(params)
+end
+-%>
+
+# This file is managed by chef
+
+all_hosts += [
+<% @nodes.each do |n| -%>
+  "<%=n.fqdn%>|<%=n.roles.join('|')%>",
+<% end -%>
+]
+
+ipaddresses = {
+<% @nodes.select do |n| -%>
+  "<%=n.fqdn%>" : "<%=n.ip_for_node(node)%>",
+<% end -%>
+}
+
+checks += [
+<% @nodes.select { |n| has_config(n, 'checks') }.each do |n| -%>
+<%  n['check_mk']['config']['checks'].each do |check, check_args| -%>
+<%    check_args.each do |name, args| -%>
+  ( "<%=n.fqdn%>", "<%=check%>", "<%=name%>", ( <%=build_args(args)%> ) ),
+<%    end -%>
+<%  end -%>
+<% end -%>
+]
+
+check_parameters += [
+<% @nodes.select { |n| has_config(n, 'check_parameters') }.each do |n| -%>
+<% end -%>
+]
+
+legacy_checks += [
+<% @nodes.select { |n| has_config(n, 'legacy_checks') }.each do |n| -%>
+<%  n['check_mk']['config']['legacy_checks'].each do |check, args| -%>
+  ( ( "chef-check-mk-custom!<%=args['command']%>", "<%=check%>", <%=(args['performance'] or "False")%> ), [ "<%=n.fqdn%>" ] ),
+<%    # Adding optional to extra service conf
+      args["extra_service_conf"] and args["extra_service_conf"].each do |c, v|
+        add_extra_service_conf(c, :service => check, :fqdn => n.fqdn, :value => v)
+      end -%>
+<%  end -%>
+<% end -%>
+]
+
+<% @extra_service_conf.each do |k, host_values| -%>
+extra_service_conf["<%=k%>"] = [
+<%  host_values.each do |conf_values| -%>
+  ( "<%=conf_values[:value]%>", [ "<%=conf_values[:fqdn]%>" ], [ "<%=conf_values[:service]%>" ] ),
+<%  end -%>
+]
+<% end -%>

@@ -1,0 +1,17 @@
+<% if @simple_array -%>
+<%  @simple_array.each do |key, array| -%>
+<%=key%> += [
+  <%=array.map { |e| "\"#{e}\"" }.join("\n,")%>
+]
+<%  end -%>
+<% end -%>
+
+<% if @simple_hash -%>
+<%  @simple_hash.each do |key, hash| -%>
+<%=key%> = {
+<%    hash.each do |k, v| -%>
+  "<%=k%>" : "<%=v%>",
+<%    end -%>
+}
+<%  end -%>
+<% end -%>
