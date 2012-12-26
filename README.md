@@ -44,20 +44,21 @@ The cookbook attributes
 * `node["check_mk"]["server"]["package"]["version"]` - Version
 * `node["check_mk"]["server"]["package"]["filename"]` - Package file name
 * `node["check_mk"]["server"]["package"]["url"]` - Download URL
-* `node["check_mk"]["server"]["package"]["checksum"]` - Downloaded file checksum (sha256)
+* `node["check_mk"]["server"]["package"]["checksum"]` - Downloaded file checksum (sha256)  
 
 * `node["check_mk"]["server"]["user"]` - Nagios user name (Default: nagios)
-* `node["check_mk"]["server"]["group"]` - Nagios group (Default: nagios)
+* `node["check_mk"]["server"]["group"]` - Nagios group (Default: nagios)  
 
 * `node["check_mk"]["server"]["conf"]["dir"]` - Check_MK configuration directory (Default /etc/check_mk)
 * `node["check_mk"]["server"]["conf"]["main"]` - Check_MK main configuration file (Default: /etc/check_mk/main.mk)
 * `node["check_mk"]["server"]["conf"]["multisite"]` - Check_MK Multisite configuration file (Default: /etc/check_mk/multisite.mk)
-* `node["check_mk"]["server"]["conf"]["unix_socket"]` - Nagios and Check_MK unix socket (Default: /var/log/nagios/rw/live)
+* `node["check_mk"]["server"]["conf"]["unix_socket"]` - Nagios and Check_MK unix socket (Default: /var/log/nagios/rw/live)  
 
+* `node["check_mk"]["nagios"]["conf.d"]` - Nagios configuration directory
 * `node["check_mk"]["nagios"]["conf"]` - Nagios main config file (Default: /etc/nagios3/nagios.cfg)
 * `node["check_mk"]["nagios"]["cgi"]` - Nagios cgi config file (Default: /etc/nagios3/cgi.cfg)
 * `node["check_mk"]["nagios"]["command_file"]` - Nagios command file (Default: /var/lib/nagios/rw/nagios.cmd)
-* `node["check_mk"]["nagios"]["plugins_dir"]` - Nagios plugins directory, used primarily to target plugins from the agent (MRPE) (Default: /usr/lib/nagios/plugins)
+* `node["check_mk"]["nagios"]["plugins_dir"]` - Nagios plugins directory, used primarily to target plugins from the agent (MRPE) (Default: /usr/lib/nagios/plugins)  
 
 * `node["check_mk"]["www"]["auth"]` - CGI auth file (Default: /etc/nagios3/htpasswd.users)
 * `node["check_mk"]["www"]["user"]` - Webserver user (Default: www-data)
