@@ -1,5 +1,5 @@
-maintainer       "YOUR_COMPANY_NAME"
-maintainer_email "YOUR_EMAIL"
+maintainer       "Fewbytes"
+maintainer_email "chef@fewbytes.com"
 license          "All rights reserved"
 description      "Installs/Configures check_mk"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
@@ -13,3 +13,5 @@ depends "source"
 
 supports "ubuntu", ">= 10.04"
 supports "debian", ">= 6.0.0"
+
+conflicts "nagios"
