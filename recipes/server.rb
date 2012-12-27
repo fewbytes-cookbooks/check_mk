@@ -4,6 +4,7 @@ include_recipe "apache2::mod_proxy_http"
 include_recipe "apache2::mod_python"
 
 include_recipe "check_mk::backend_nagios"
+include_recipe "check_mk::pnp4nagios" # TODO: consider supporting graphite
 
 # Add the apache user to nagios group
 group node['check_mk']['server']['group'] do
@@ -13,37 +14,14 @@ group node['check_mk']['server']['group'] do
   notifies :restart, "service[apache2]"
 end
 
-# TODO: Make check_mk installation process idempotent, use `source` cookbook from fewbytes-common
 cmk_package = node['check_mk']['server']['package']
-cmk_package_file = ::File.join("/opt", cmk_package['filename'])
-cmk_package_dir = ::File.join("/opt", "#{cmk_package['name']}-#{cmk_package['version']}")
 
-remote_file cmk_package_file do
-  action :create
+source_package "check_mk" do
+  source_type "tarball"
   source cmk_package['url']
   checksum cmk_package['checksum']
-end
-
-execute "extract-check_mk" do
-  action :nothing
-  command "tar -xzf #{cmk_package_file}"
-  creates cmk_package_dir
-  cwd "/opt"
-  timeout 3600
-  returns 0
-  umask "022"
-  subscribes :run, "remote_file[#{cmk_package_file}]"
-end
-
-execute "install-check_mk" do
-  action :nothing
-  command "bash setup.sh --yes"
-  creates node['check_mk']['server']['conf']['dir']
-  cwd cmk_package_dir
-  timeout 3600
-  returns 0
-  umask "022"
-  subscribes :run, "execute[extract-check_mk]"
+  build_command "bash setup.sh --yes"
+  creates "/usr/share/check_mk/modules/check_mk.py"
   notifies :restart, "service[apache2]"
 end
 

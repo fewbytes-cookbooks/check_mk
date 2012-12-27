@@ -1,0 +1,1 @@
+package "pnp4nagios"
