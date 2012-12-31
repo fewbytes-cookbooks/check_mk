@@ -125,7 +125,6 @@ These attributes configure various related variables per host. On some of them, 
 * `performance` - Flag for a performance check or not (Default: False). See legacy checks page.
 * `extra_service_conf` - Hash of key value pairs for configuration variables that will be attached to this check.
 
-
 Pseudo agents configuration
 --------------------------
 
@@ -134,6 +133,7 @@ Many times you have some external device or a port on a load-balancer you'd like
 Pseudo agents are node-like attribute structures configured in a data bag item. The cookbook only looks at the structure which is relevant for registering the agent on Check_MK/main.mk. By duplicating the relevant structure, we try to make it easier to remember or transfer some configuration from a node/role to a data bag item.
 
 An example for the data bag item check_mk[pseudo_agents]
+
     {
         'id': 'pseudo_agents',
         'arbitrary.hostname': {
