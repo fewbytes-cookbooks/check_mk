@@ -4,7 +4,6 @@ include_recipe "apache2::mod_proxy_http"
 include_recipe "apache2::mod_python"
 
 include_recipe "check_mk::backend_nagios"
-include_recipe "check_mk::pnp4nagios" # TODO: consider supporting graphite
 
 # Add the apache user to nagios group
 group node['check_mk']['server']['group'] do
