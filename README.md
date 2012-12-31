@@ -5,7 +5,7 @@ Description
 
 Check_MK and Nagios are both file configured and as such, have configuration shortcuts like host_groups (Nagios) and tags (Check_MK). This cookbook considers these types of configuration variables as a human interface, so in most cases you'll see duplicated settings. For example, when configuring custom checks in a role, these checks will be configured for each host separately.
 
-This cookbook does not depend on the Nagios cookbook since it tries to do too much. Instead, it is treated as a backend and configured as in a minimalistic fashion.
+This cookbook does not depend on the Nagios cookbook since it tries to do too much. Instead, it is treated as a backend and configured in a minimalistic fashion.
 
 Most of the attributes correspond to the values that are expected from that packages.
 
