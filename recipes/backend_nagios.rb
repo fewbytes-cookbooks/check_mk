@@ -53,3 +53,10 @@ cookbook_file ::File.join(node['check_mk']['nagios']['conf.d'], 'chef-check-mk-t
   mode "0644"
   notifies :reload, "service[nagios3]"
 end
+
+if node['check_mk']['nagios']['extra_plugins']
+  package node['check_mk']['nagios']['extra_plugins_package'] do
+    action :install
+    notifies :restart, "service[nagios3]"
+  end
+end

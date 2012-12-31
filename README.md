@@ -60,6 +60,9 @@ The cookbook attributes
 * `node["check_mk"]["nagios"]["command_file"]` - Nagios command file (Default: /var/log/nagios/rw/nagios.cmd)
 * `node["check_mk"]["nagios"]["plugins_dir"]` - Nagios plugins directory, used primarily to target plugins from the agent (MRPE) (Default: /usr/lib/nagios/plugins)  
 
+* `node["check_mk"]["nagios"]["extra_plugins"]` - Install nagios' extra plugins or not (Default: true)
+* `node["check_mk"]["nagios"]["extra_plugins_package"]` - The extra plugins package name  
+
 * `node["check_mk"]["www"]["auth"]` - CGI auth file (Default: /etc/nagios3/htpasswd.users)
 * `node["check_mk"]["www"]["user"]` - Webserver user (Default: www-data)
 * `node["check_mk"]["www"]["group"]` - Webserver group (Default: www-data)
