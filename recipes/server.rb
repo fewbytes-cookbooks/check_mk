@@ -96,6 +96,21 @@ template node['check_mk']['server']['conf']['multisite'] do
 end
 
 agents = all_providers_for_service('check-mk-agent')
+pseudo_agents = []
+
+pseudo_agents_search = search(:check_mk, 'id:pseudo_agents')
+if pseudo_agents_search.any?
+  pseudo_agents += pseudo_agents_search.first.select { |k, v| k != "id" }.map do |_, n|
+    n['roles'] += ['pseudo-agent'] rescue n['roles'] = ['pseudo-agent']
+
+    n['check_mk'] ||= {}
+    n['check_mk']['config'] ||= {}
+    n['check_mk']['config']['extra_host_conf'] ||= {}
+    n['check_mk']['config']['extra_host_conf']['check_command'] ||= 'chef-check-mk-custom!echo Default host check_command which is always true for pseudo-agents'
+
+    n#othing
+  end
+end
 
 template node['check_mk']['server']['conf']['main'] do
   source "main.mk.erb"
@@ -103,7 +118,7 @@ template node['check_mk']['server']['conf']['main'] do
   group "root"
   mode "0644"
   variables(
-    :nodes => agents
+    :nodes => agents + pseudo_agents
   )
   notifies :run, "execute[inventorize-check_mk]"
 end

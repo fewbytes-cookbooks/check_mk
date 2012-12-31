@@ -23,14 +23,26 @@ def build_args(args)
     map { |_, e| prepare_print(e) }.join(', ')
 end
 
-def has_config(n, conf)
+def mk_config(n, conf)
   n['check_mk'] and n['check_mk']['config'] and n['check_mk']['config'][conf]
+end
+
+@extra_host_conf = {}
+def add_extra_host_conf(conf, params)
+  @extra_host_conf[conf] ||= Array.new
+  @extra_host_conf[conf].push(params)
 end
 
 @extra_service_conf = {}
 def add_extra_service_conf(conf, params)
-  @extra_service_conf[conf] = Array.new unless @extra_service_conf[conf]
+  @extra_service_conf[conf] ||= Array.new
   @extra_service_conf[conf].push(params)
+end
+
+@nodes.select{ |n| mk_config(n, 'extra_host_conf') }.each do |n|
+  mk_config(n, 'extra_host_conf').each do |k, v|
+    add_extra_host_conf(k, :fqdn => n['fqdn'], :value => v)
+  end
 end
 -%>
 
@@ -38,38 +50,38 @@ end
 
 all_hosts += [
 <% @nodes.each do |n| -%>
-  "<%=n.fqdn%>|<%=n.roles.join('|')%>",
+  "<%=n['fqdn']%>|<%=n['roles'].join('|')%>",
 <% end -%>
 ]
 
 ipaddresses = {
 <% @nodes.select do |n| -%>
-  "<%=n.fqdn%>" : "<%=n.ip_for_node(node)%>",
+  "<%=n['fqdn']%>" : "<%=(n.respond_to?(:ip_for_node) ? n.ip_for_node(node) : (n['ipv4'] or n['fqdn'])%>",
 <% end -%>
 }
 
 checks += [
-<% @nodes.select { |n| has_config(n, 'checks') }.each do |n| -%>
+<% @nodes.select { |n| mk_config(n, 'checks') }.each do |n| -%>
 <%  n['check_mk']['config']['checks'].each do |check, check_args| -%>
 <%    check_args.each do |name, args| -%>
-  ( "<%=n.fqdn%>", "<%=check%>", "<%=name%>", ( <%=build_args(args)%> ) ),
+  ( "<%=n['fqdn']%>", "<%=check%>", "<%=name%>", ( <%=build_args(args)%> ) ),
 <%    end -%>
 <%  end -%>
 <% end -%>
 ]
 
 check_parameters += [
-<% @nodes.select { |n| has_config(n, 'check_parameters') }.each do |n| -%>
+<% @nodes.select { |n| mk_config(n, 'check_parameters') }.each do |n| -%>
 <% end -%>
 ]
 
 legacy_checks += [
-<% @nodes.select { |n| has_config(n, 'legacy_checks') }.each do |n| -%>
+<% @nodes.select { |n| mk_config(n, 'legacy_checks') }.each do |n| -%>
 <%  n['check_mk']['config']['legacy_checks'].each do |check, args| -%>
-  ( ( "chef-check-mk-custom!<%=args['command']%>", "<%=check%>", <%=(args['performance'] or "False")%> ), [ "<%=n.fqdn%>" ] ),
+  ( ( "chef-check-mk-custom!<%=args['command']%>", "<%=check%>", <%=(args['performance'] or "False")%> ), [ "<%=n['fqdn']%>" ] ),
 <%    # Adding optional to extra service conf
       args["extra_service_conf"] and args["extra_service_conf"].each do |c, v|
-        add_extra_service_conf(c, :service => check, :fqdn => n.fqdn, :value => v)
+        add_extra_service_conf(c, :service => check, :fqdn => n['fqdn'], :value => v)
       end -%>
 <%  end -%>
 <% end -%>
@@ -79,6 +91,14 @@ legacy_checks += [
 extra_service_conf["<%=k%>"] = [
 <%  host_values.each do |conf_values| -%>
   ( "<%=conf_values[:value]%>", [ "<%=conf_values[:fqdn]%>" ], [ "<%=conf_values[:service]%>" ] ),
+<%  end -%>
+]
+<% end -%>
+
+<% @extra_host_conf.each do |k, host_values| -%>
+extra_host_conf["<%=k%>"] = [
+<%  host_values.each do |conf_values| -%>
+  ( "<%=conf_values[:value]%>", [ "<%=conf_values[:fqdn]%>" ] ),
 <%  end -%>
 ]
 <% end -%>
