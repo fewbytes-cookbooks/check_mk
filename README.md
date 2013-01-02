@@ -17,20 +17,21 @@ Platform
 
 ### Currently supported platforms
 
-* Ubuntu
+* Ubuntu >= 10.04
+* Debian >= 6.0.0
 
 ### Platforms to be supported (TODO)
 
 * Red Hat branch
-* Verify on Debian branch
 
 Cookbooks
 ---------
 
-* apache2
+* [apache2](http://community.opscode.com/cookbooks/apache2)
 * cluster_service_discovery
-* fewbytes-common
-* xinetd
+* [fewbytes-common](https://github.com/fewbytes-cookbooks/fewbytes-common)
+* [xinetd](http://community.opscode.com/cookbooks/xinetd)
+* [source](https://github.com/fewbytes-cookbooks/source)
 
 Attributes
 ==========
@@ -195,6 +196,8 @@ TODO
 ====
 
 * Create a general purpose minimal nagios cookbook and remove backend_nagios recipe and its attributes from this cookbook.
+* Replace the cluster_service_discovery cookbook with fewbytes-cookbooks/service_discovery or silverware cookbook.
+* Build a proper test suite.
 
 Configuration variables
 -----------------------
