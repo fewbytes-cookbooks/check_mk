@@ -128,35 +128,51 @@ These attributes configure various related variables per host. On some of them, 
 Pseudo agents configuration
 --------------------------
 
-Many times you have some external device or a port on a load-balancer you'd like to monitor, in which case you cannot use the agent recipe. For this you can use psuedo agents through the check_mk:pseudo_agents data bag item.
+Many times you have some external device or a port on a load-balancer you'd like to monitor, in which case you cannot use the agent recipe. For this you can use psuedo agents through the check_mk data bag.
 
-Pseudo agents are node-like attribute structures configured in a data bag item. The cookbook only looks at the structure which is relevant for registering the agent on Check_MK/main.mk. By duplicating the relevant structure, we try to make it easier to remember or transfer some configuration from a node/role to a data bag item.
+Pseudo agents are node-like attribute structures configured in a data bag item. The cookbook only looks at the structure which is relevant for registering the agent on Check_MK. By duplicating the relevant structure, we try to make it easier to remember or transfer some configuration from a node/role to a data bag item.
 
-An example for the data bag item check_mk[pseudo_agents]
+The server recipe looks for items in the data bag `check_mk`, with the pseudo_agents `usage` on the same `chef_environment`. The exact search call is `search(:check_mk, "usage:pseudo_agents AND chef_environment:#{node.chef_environment}")`.
+
+An example for a data bag item
 
     {
-        'id': 'pseudo_agents',
-        'arbitrary.hostname': {
-            'fqdn': "somehost.somedomain",
-            'ipv4': "ip.add.re.ss",
-            'check_mk': {
-                'tags': ["sometag"],
-                'config': {
-                    'legacy_checks': {
-                        'Load balancer': {
-                            'command': "$USER1$/check_http ..."
-                            'performance': "False"
+        'id': 'some data bag item id',
+        'usage': [
+            'pseudo_agents'
+        ],
+        'chef_environment': [
+            '_default'
+        ],
+        'agents': {
+            'arbitrary.agent.name': {
+                'fqdn': "somehost.somedomain",
+                'ipv4': "ip.add.re.ss",
+                'check_mk': {
+                    'tags': ["sometag"],
+                    'config': {
+                        'legacy_checks': {
+                            'Load balancer': {
+                                'command': "$USER1$/check_http ..."
+                                'performance': "False"
+                            }
                         }
                     }
                 }
+            },
+            'another.agent': {
+                # ...
             }
         }
     }
 
-* `arbitrary.hostname` - Could be any legal data bag item key, not used by cookbook.
-* `fqdn` - Required. This is how the cookbook chooses the host name.
-* `ipv4` - Optional. Normally, the cookbook tries to find the best ip address to use, but since this is not a real node you must supply a real IP address (or hostname) if fqdn cannot be resolved.
-* `check_mk` - An attribute tree which is treated exactly as it would be in a node's attributes.
+* `usage` - Required to contain `pseudo_agents` so it would be returned by the search query.
+* `chef_environment` - Must contain the same environment value like the server.
+* `agents` - The recipe looks for agents under this key.
+    * `arbitrary.agent.name` - Could be any legal data bag item key, not used by cookbook.
+        * `fqdn` - Required. This is how the cookbook chooses the host name.
+        * `ipv4` - Optional. Normally, the cookbook tries to find the best ip address to use, but since this is not a real node you must supply a real IP address (or hostname) if fqdn cannot be resolved.
+        * `check_mk` - An attribute tree which is treated exactly as it would be in a node's attributes.
 
 Usage
 =====
