@@ -56,7 +56,11 @@ all_hosts += [
 
 ipaddresses = {
 <% @nodes.select do |n| -%>
+<<<<<<< HEAD
   "<%=n['fqdn']%>" : "<%=(n.respond_to?(:ip_for_node) ? n.ip_for_node(node) : (n['ipv4'] or n['fqdn']) ) %>",
+=======
+  "<%=n['fqdn']%>" : "<%=(n.respond_to?(:ip_for_node) ? n.ip_for_node(node) : (n['ipv4'] or n['fqdn']))%>",
+>>>>>>> Fixed syntax error in template
 <% end -%>
 }
 
