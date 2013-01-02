@@ -97,12 +97,11 @@ template node['check_mk']['server']['conf']['multisite'] do
 end
 
 agents = all_providers_for_service('check-mk-agent')
-Chef::Log.info("Agents detected: #{agents}")
 pseudo_agents = []
 
 pseudo_agents_search =
   begin
-    search(:check_mk, 'id:pseudo_agents')
+    search(:check_mk, "usage:pseudo_agents AND chef_environment:#{node.chef_environment}")
   rescue OpenURI::HTTPError
     []
   rescue Net::HTTPServerException
@@ -110,15 +109,17 @@ pseudo_agents_search =
   end
 
 if pseudo_agents_search.any?
-  pseudo_agents += pseudo_agents_search.first.select { |k, v| k != "id" }.map do |_, n|
-    n['roles'] += ['pseudo-agent'] rescue n['roles'] = ['pseudo-agent']
+  pseudo_agents_search.select{ |n| n['agents'] }.each do |item|
+    pseudo_agents += item['agents'].map do |_, n|
+      n['roles'] += ['pseudo-agent'] rescue n['roles'] = ['pseudo-agent']
 
-    n['check_mk'] ||= {}
-    n['check_mk']['config'] ||= {}
-    n['check_mk']['config']['extra_host_conf'] ||= {}
-    n['check_mk']['config']['extra_host_conf']['check_command'] ||= 'chef-check-mk-custom!echo Default host check_command which is always true for pseudo-agents'
+      n['check_mk'] ||= {}
+      n['check_mk']['config'] ||= {}
+      n['check_mk']['config']['extra_host_conf'] ||= {}
+      n['check_mk']['config']['extra_host_conf']['check_command'] ||= 'chef-check-mk-custom!echo Default host check_command which is always true for pseudo-agents'
 
-    n#othing
+      n#othing
+    end
   end
 end
 
