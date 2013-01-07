@@ -63,6 +63,14 @@ directory ::File.dirname(node['check_mk']['server']['conf']['unix_socket']) do
   notifies :restart, "service[nagios3]"
 end
 
+# Enable www-data to control check_mk
+sudo "www-data-check_mk-automation" do
+  user node['check_mk']['www']['user']
+  runas 'root'
+  commands ['/usr/bin/check_mk --automation *']
+  nopasswd true
+end
+
 # TODO: Find a better way to configure users
 sysadmins = search(:users, 'groups:sysadmin')
 

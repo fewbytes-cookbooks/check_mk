@@ -10,6 +10,7 @@ depends "cluster_service_discovery"
 depends "fewbytes-common"
 depends "xinetd"
 depends "source"
+depends "sudo"
 
 supports "ubuntu", ">= 10.04"
 supports "debian", ">= 6.0.0"
