@@ -179,6 +179,7 @@ TODO
 ====
 
 * Create a general purpose minimal nagios cookbook and remove backend_nagios recipe and its attributes from this cookbook.
+* Replace the dependency of cluster_service_discovery with fewbytes' version of it.
 
 Configuration variables
 -----------------------
