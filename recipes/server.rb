@@ -63,7 +63,8 @@ directory ::File.dirname(node['check_mk']['server']['conf']['unix_socket']) do
   notifies :restart, "service[nagios3]"
 end
 
-sysadmins = search(:users, 'groups:admins')
+# TODO: Find a better way to configure users
+sysadmins = search(:users, 'groups:sysadmins')
 
 file node['check_mk']['www']['auth'] do
   action :create
