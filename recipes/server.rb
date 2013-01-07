@@ -97,6 +97,7 @@ template node['check_mk']['server']['conf']['multisite'] do
 end
 
 agents = all_providers_for_service('check-mk-agent')
+Chef::Log.info("Agents detected: #{agents}")
 pseudo_agents = []
 
 pseudo_agents_search =

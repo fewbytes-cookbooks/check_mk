@@ -23,3 +23,5 @@ directory node['check_mk']['agent']['conf_dir'] do
   group "root"
   mode "0755"
 end
+
+node.save
