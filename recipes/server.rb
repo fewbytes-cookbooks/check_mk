@@ -33,6 +33,7 @@ execute "restart-check_mk" do
   cwd node['check_mk']['server']['conf']['dir']
   timeout 3600
   returns 0
+  ignore_failure true
 end
 
 execute "inventorize-check_mk" do
@@ -98,7 +99,15 @@ end
 agents = all_providers_for_service('check-mk-agent')
 pseudo_agents = []
 
-pseudo_agents_search = search(:check_mk, 'id:pseudo_agents')
+pseudo_agents_search =
+  begin
+    search(:check_mk, 'id:pseudo_agents')
+  rescue OpenURI::HTTPError
+    []
+  rescue Net::HTTPServerException
+    []
+  end
+
 if pseudo_agents_search.any?
   pseudo_agents += pseudo_agents_search.first.select { |k, v| k != "id" }.map do |_, n|
     n['roles'] += ['pseudo-agent'] rescue n['roles'] = ['pseudo-agent']
