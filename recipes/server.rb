@@ -80,9 +80,7 @@ file node['check_mk']['www']['auth'] do
   owner node['check_mk']['server']['user']
   group node['check_mk']['server']['group']
   mode "0664"
-  content sysadmins.map{|user| "#{user['id']}:#{user['htpasswd']}"}.join("\n")
-  # TODO: Restart the backend, not nagios3
-  notifies :reload, "service[nagios3]"
+  content sysadmins.map{|u| "#{u['id']}:#{u['htpasswd']}"}.join("\n")
 end
 
 template node['check_mk']['www']['conf'] do
