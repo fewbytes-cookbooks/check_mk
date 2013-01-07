@@ -3,11 +3,6 @@ package "nagios3" do
   action :install
 end
 
-service "nagios3" do
-  supports :status => true, :restart => true, :reload => true
-  action [ :enable, :start ]
-end
-
 # Clear nagios package config files
 %w{ hostgroups_nagios2.cfg localhost_nagios2.cfg services_nagios2.cfg extinfo_nagios2.cfg }.each do |conf|
   file ::File.join('/etc', 'nagios3', 'conf.d', conf) do
@@ -60,3 +55,10 @@ if node['check_mk']['nagios']['extra_plugins']
     notifies :restart, "service[nagios3]"
   end
 end
+
+service "nagios3" do
+  supports :status => true, :restart => true, :reload => true
+  action [ :enable, :start ]
+  ignore_failure true
+end
+
