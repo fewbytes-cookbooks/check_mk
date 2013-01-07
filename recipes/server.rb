@@ -64,7 +64,7 @@ directory ::File.dirname(node['check_mk']['server']['conf']['unix_socket']) do
 end
 
 # TODO: Find a better way to configure users
-sysadmins = search(:users, 'groups:sysadmins')
+sysadmins = search(:users, 'groups:sysadmin')
 
 file node['check_mk']['www']['auth'] do
   action :create
