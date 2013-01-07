@@ -96,7 +96,8 @@ template node['check_mk']['server']['conf']['multisite'] do
   )
 end
 
-agents = all_providers_for_service('check-mk-agent')
+agents = all_providers_for_service('check-mk-agent',  :fallback_environments => [node["anyclip"]["common_env"],
+    "#{node["anyclip"]["common_env"]}1", "#{node["anyclip"]["common_env"]}2" ] )
 pseudo_agents = []
 
 pseudo_agents_search =
@@ -118,7 +119,6 @@ if pseudo_agents_search.any?
       n['check_mk']['config']['extra_host_conf'] ||= {}
       n['check_mk']['config']['extra_host_conf']['check_command'] ||= 'chef-check-mk-custom!echo Default host check_command which is always true for pseudo-agents'
 
-      n#othing
     end
   end
 end
