@@ -32,6 +32,7 @@ Cookbooks
 * [fewbytes-common](https://github.com/fewbytes-cookbooks/fewbytes-common)
 * [xinetd](http://community.opscode.com/cookbooks/xinetd)
 * [source](https://github.com/fewbytes-cookbooks/source)
+* [sudo](https://github.com/opscode-cookbooks/sudo)
 
 Attributes
 ==========
