@@ -39,6 +39,14 @@ def add_extra_service_conf(conf, params)
   @extra_service_conf[conf].push(params)
 end
 
+@nodes.select{ |n| mk_config(n, 'extra_service_conf') }.each do |n|
+  mk_config(n, 'extra_service_conf').each do |check, conf|
+    conf.each do |k, v|
+      add_extra_service_conf(k, :service => check, :fqdn => n['fqdn'], :value => v)
+    end
+  end
+end
+
 @nodes.select{ |n| mk_config(n, 'extra_host_conf') }.each do |n|
   mk_config(n, 'extra_host_conf').each do |k, v|
     add_extra_host_conf(k, :fqdn => n['fqdn'], :value => v)
