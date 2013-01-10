@@ -26,3 +26,8 @@ template node['check_mk']['pnp4nagios']['npcd_config_file'] do
   notifies :restart, "service[npcd]"
 end
 
+template ::File.join(node['apache']['dir'], "conf.d", "pnp4nagios.conf") do
+  source "pnp4nagios.apache.conf.erb"
+  mode "0644"
+  notifies :reload, "service[apache2]"
+end
