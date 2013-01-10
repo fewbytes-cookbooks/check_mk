@@ -1,6 +1,6 @@
 package "pnp4nagios"
 
-include_recipe "apache::mod_php5"
+include_recipe "apache2::mod_php5"
 
 directory node['check_mk']['pnp4nagios']['perfdata_dir'] do
   mode "0755"
