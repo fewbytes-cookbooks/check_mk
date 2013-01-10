@@ -248,7 +248,10 @@ event_broker_options=-1
 
 #broker_module=/somewhere/module1.o
 #broker_module=/somewhere/module2.o arg1 arg2=3 debug=0
-broker_module=/usr/lib/check_mk/livestatus.o <%=@unix_socket%>
+broker_module=/usr/lib/check_mk/livestatus.o <% if node.recipes.include? 'check_mk::pnp4nagios' -%>pnp_path=<%= node['check_mk']['pnp4nagios']['perdata_dir'] %><% end -%> <%=@unix_socket%>
+<% if node.recipes.include? "check_mk::pnp4nagios" -%>
+broker_module=<%= node['check_mk']['pnp4nagios']['npcd_broker_library'] %> config_file=<%= node['check_mk']['pnp4nagios']['npcd_config_file'] %>
+<% end -%>
 
 
 # LOG ROTATION METHOD

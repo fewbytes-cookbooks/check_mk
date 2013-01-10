@@ -8,7 +8,7 @@ include_recipe "check_mk::backend_nagios"
 # Add the apache user to nagios group
 group node['check_mk']['server']['group'] do
   action :create
-  members [ node['check_mk']['www']['user'] ]
+  members [ node['apache']['user'] ]
   append true
   notifies :restart, "service[apache2]"
 end
@@ -65,7 +65,7 @@ end
 
 # Enable www-data to control check_mk
 sudo "www-data-check_mk-automation" do
-  user node['check_mk']['www']['user']
+  user node['apache']['user']
   runas 'root'
   commands ['/usr/bin/check_mk --automation *']
   nopasswd true
