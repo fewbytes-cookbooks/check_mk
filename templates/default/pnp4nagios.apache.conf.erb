@@ -1,0 +1,30 @@
+# This file is managed by Chef, changes will be rewritten
+
+Alias /pnp4nagios "/usr/share/pnp4nagios/html"
+
+<Directory "/usr/share/pnp4nagios/html">
+   	AllowOverride None
+   	Order allow,deny
+   	Allow from all
+   	#
+   	# Use the same value as defined in nagios.conf
+   	#
+   	AuthName "Nagios Access"
+   	AuthType Basic
+    AuthUserFile <%= node['check_mk']['www']['auth'] %>
+   	Require valid-user
+	<IfModule mod_rewrite.c>
+		# Turn on URL rewriting
+		RewriteEngine On
+		Options FollowSymLinks
+		# Installation directory
+		RewriteBase /pnp4nagios/
+		# Protect application and system files from being viewed
+		RewriteRule ^(application|modules|system) - [F,L]
+		# Allow any files or directories that exist to be displayed directly
+		RewriteCond %{REQUEST_FILENAME} !-f
+		RewriteCond %{REQUEST_FILENAME} !-d
+		# Rewrite all other URLs to index.php/URL
+		RewriteRule .* index.php/$0 [PT,L]
+	</IfModule>
+</Directory>
