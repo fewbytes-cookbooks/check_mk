@@ -1,0 +1,7 @@
+# Default settings for the NPCD init script.
+
+# Should NPCD be started? ("yes" to enable)
+RUN="yes"
+
+# Additional options that are passed to the daemon.
+DAEMON_OPTS="-d -f <%= node['check_mk']['pnp4nagios']['npcd_config_file'] %>"
