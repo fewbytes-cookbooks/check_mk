@@ -31,3 +31,5 @@ template ::File.join(node['apache']['dir'], "conf.d", "pnp4nagios.conf") do
   mode "0644"
   notifies :reload, "service[apache2]"
 end
+
+service "ncpd"
