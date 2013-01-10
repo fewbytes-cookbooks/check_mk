@@ -103,7 +103,7 @@ template node['check_mk']['server']['conf']['multisite'] do
   )
 end
 
-agents = all_providers_for_service('check-mk-agent')
+agents = all_providers_for_service('check-mk-agent').sort {|a,b| a.name <=> b.name }
 pseudo_agents = []
 
 pseudo_agents_search =
@@ -127,7 +127,7 @@ if pseudo_agents_search.any?
 
       n#othing
     end
-  end
+  end.sort{|a,b| a['fqdn'] <=> b['fqdn'] }
 end
 
 template node['check_mk']['server']['conf']['main'] do

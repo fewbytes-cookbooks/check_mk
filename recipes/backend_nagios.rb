@@ -33,8 +33,8 @@ template node['check_mk']['nagios']['conf'] do
   group "root"
   mode "0644"
   variables(
-    :command_file => @node['check_mk']['nagios']['command_file'],
-    :unix_socket => @node['check_mk']['server']['conf']['unix_socket']
+    :command_file => node['check_mk']['nagios']['command_file'],
+    :unix_socket => node['check_mk']['server']['conf']['unix_socket']
   )
   notifies :restart, "service[nagios3]"
 end
