@@ -3,6 +3,15 @@ package "nagios3" do
   action :install
 end
 
+group node['check_mk']['server']['group']
+
+user node['check_mk']['server']['user'] do
+  home node['check_mk']['nagios']['lib_dir']
+  shell "/bin/false"
+  system true
+  gid "nagios"
+end
+
 # Clear nagios package config files
 %w{ hostgroups_nagios2.cfg localhost_nagios2.cfg services_nagios2.cfg extinfo_nagios2.cfg }.each do |conf|
   file ::File.join('/etc', 'nagios3', 'conf.d', conf) do

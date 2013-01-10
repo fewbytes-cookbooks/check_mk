@@ -4,7 +4,7 @@ include_recipe "apache2::mod_php5"
 
 directory node['check_mk']['pnp4nagios']['perfdata_dir'] do
   mode "0755"
-  owner node['check_mk']['nagios']['user']
+  owner node['check_mk']['server']['user']
   group node['apache']['group']
 end
 
@@ -15,8 +15,8 @@ end
 [::File.dirname(node['check_mk']['pnp4nagios']['log_dir']), node['check_mk']['pnp4nagios']['npcd_spool_dir'] ].each do |dir|
   directory dir do
     mode "0755"
-    owner node['check_mk']['nagios']['user']
-    group node['check_mk']['nagios']['group']
+    owner node['check_mk']['server']['user']
+    group node['check_mk']['server']['group']
   end
 end
 
