@@ -3,7 +3,13 @@ package "nagios3" do
   action :install
 end
 
-group node['check_mk']['server']['group']
+# Add the apache user to nagios group
+group node['check_mk']['server']['group'] do
+  action :create
+  members [ node['apache']['user'] ]
+  append true
+  notifies :restart, "service[apache2]"
+end
 
 user node['check_mk']['server']['user'] do
   home node['check_mk']['nagios']['lib_dir']

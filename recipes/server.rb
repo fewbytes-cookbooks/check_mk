@@ -5,14 +5,6 @@ include_recipe "apache2::mod_python"
 
 include_recipe "check_mk::backend_nagios"
 
-# Add the apache user to nagios group
-group node['check_mk']['server']['group'] do
-  action :create
-  members [ node['apache']['user'] ]
-  append true
-  notifies :restart, "service[apache2]"
-end
-
 cmk_package = node['check_mk']['server']['package']
 
 source_package "check_mk" do
