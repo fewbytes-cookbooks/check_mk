@@ -21,7 +21,7 @@ end
 end
 
 template node['check_mk']['pnp4nagios']['npcd_config_file'] do
-  source "ncpd.cfg.erb"
+  source "npcd.cfg.erb"
   mode "0644"
   notifies :restart, "service[npcd]"
 end
