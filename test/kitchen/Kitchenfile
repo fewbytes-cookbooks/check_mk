@@ -1,0 +1,3 @@
+cookbook "check_mk" do
+  configuration "server"
+end
