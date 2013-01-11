@@ -40,7 +40,7 @@ log_type = syslog
 # log_file = </path/to/logpath/filename>
 #
 
-log_file = /var/log/pnp4nagios/npcd.log
+log_file = <%= node['check_mk']['pnp4nagios']['log_dir'] %>/npcd.log
 
 
 # max_logfile_size - defines the maximum filesize (bytes)
