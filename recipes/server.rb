@@ -58,9 +58,9 @@ sysadmins = search(:users, 'groups:sysadmin OR (groups:check_mk AND groups:autom
 
 directory ::File.dirname(node['check_mk']['server']['paths']['htpasswd_file']) do
   action :create
-  owner "root"
-  group "root"
-  mode "0755"
+  owner node['check_mk']['server']['user']
+  group node['check_mk']['server']['group']
+  mode "0775"
   recursive true
 end
 
