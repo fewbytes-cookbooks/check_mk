@@ -105,6 +105,7 @@ end
 
 agents = all_providers_for_service('check-mk-agent',  :fallback_environments => [node["anyclip"]["common_env"],
     "#{node["anyclip"]["common_env"]}1", "#{node["anyclip"]["common_env"]}2" ] )
+agents = search(:node, "chef_environment:#{node.chef_environment}* AND cluster_services:check-mk-agent")
 pseudo_agents = []
 
 pseudo_agents_search =
