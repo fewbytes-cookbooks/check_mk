@@ -1,3 +1,4 @@
+# TODO: Move this to a nagios-minimal cookbook
 # Minimalist nagios installation recipe
 package "nagios3" do
   action :install
@@ -20,13 +21,13 @@ end
 
 # Clear nagios package config files
 %w{ hostgroups_nagios2.cfg localhost_nagios2.cfg services_nagios2.cfg extinfo_nagios2.cfg }.each do |conf|
-  file ::File.join('/etc', 'nagios3', 'conf.d', conf) do
+  file ::File.join(node['check_mk']['server']['paths']['nagios_conf_dir'], conf) do
     action :delete
     notifies :restart, "service[nagios3]"
   end
 end
 
-directory ::File.dirname(node['check_mk']['nagios']['command_file']) do
+directory ::File.dirname(node['check_mk']['server']['paths']['nagios_command_pipe_path']) do
   action :create
   owner node['check_mk']['server']['user']
   group node['check_mk']['server']['group']
@@ -34,13 +35,13 @@ directory ::File.dirname(node['check_mk']['nagios']['command_file']) do
   recursive true
 end
 
-template node['check_mk']['nagios']['conf'] do
+template node['check_mk']['server']['paths']['nagios_config_file'] do
   owner "root"
   group "root"
   mode "0644"
   variables(
-    :command_file => node['check_mk']['nagios']['command_file'],
-    :unix_socket => node['check_mk']['server']['conf']['unix_socket']
+    :command_file => node['check_mk']['server']['paths']['nagios_command_pipe_path'],
+    :unix_socket => node['check_mk']['server']['paths']['livestatus_unix_socket']
   )
   notifies :restart, "service[nagios3]"
 end
@@ -51,13 +52,13 @@ file ::File.join(node['check_mk']['nagios']['plugins_dir'], "check_icmp") do
   mode "4755" # Executable, Suid
 end
 
-template node['check_mk']['nagios']['cgi'] do
+template node['check_mk']['server']['paths']['nagios_cgi_config'] do
   owner "root"
   group "root"
   mode "0644"
 end
 
-cookbook_file ::File.join(node['check_mk']['nagios']['conf.d'], 'chef-check-mk-templates.cfg') do
+cookbook_file ::File.join(node['check_mk']['server']['paths']['nagios_conf_dir'], 'chef-check-mk-templates.cfg') do
   owner "root"
   group "root"
   mode "0644"

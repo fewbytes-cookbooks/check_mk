@@ -35,15 +35,7 @@ execute "inventorize-check_mk" do
   notifies :run, "execute[restart-check_mk]"
 end
 
-directory ::File.dirname(node['check_mk']['www']['auth']) do
-  action :create
-  owner "root"
-  group "root"
-  mode "0755"
-  recursive true
-end
-
-directory ::File.dirname(node['check_mk']['server']['conf']['unix_socket']) do
+directory ::File.dirname(node['check_mk']['server']['paths']['livestatus_unix_socket']) do
   owner node['check_mk']['server']['user']
   group node['check_mk']['server']['group']
   mode "0755"
@@ -64,7 +56,15 @@ end
 # TODO: Find a better way to configure users
 sysadmins = search(:users, 'groups:sysadmin')
 
-file node['check_mk']['www']['auth'] do
+directory ::File.dirname(node['check_mk']['server']['paths']['htpasswd_file']) do
+  action :create
+  owner "root"
+  group "root"
+  mode "0755"
+  recursive true
+end
+
+file node['check_mk']['server']['paths']['htpasswd_file'] do
   action :create
   backup 5
   owner node['check_mk']['server']['user']
@@ -73,17 +73,17 @@ file node['check_mk']['www']['auth'] do
   content sysadmins.map{|u| "#{u['id']}:#{u['htpasswd']}"}.join("\n")
 end
 
-template node['check_mk']['www']['conf'] do
+template node['check_mk']['server']['paths']['apache_config_file'] do
   owner "root"
   group "root"
   mode "0644"
   variables(
-    :authfile => node['check_mk']['www']['auth']
+    :authfile => node['check_mk']['server']['paths']['htpasswd_file']
   )
   notifies :reload, "service[apache2]"
 end
 
-template node['check_mk']['server']['conf']['multisite'] do
+template node['check_mk']['server']['paths']['multisite_config_file'] do
   source "multisite.mk.erb"
   owner "root"
   group "root"
@@ -120,7 +120,7 @@ if pseudo_agents_search.any?
   end.sort{|a,b| a['fqdn'] <=> b['fqdn'] }
 end
 
-template node['check_mk']['server']['conf']['main'] do
+template node['check_mk']['server']['paths']['main_config_file'] do
   source "main.mk.erb"
   owner "root"
   group "root"
