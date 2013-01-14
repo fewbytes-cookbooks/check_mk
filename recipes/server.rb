@@ -54,7 +54,7 @@ sudo "www-data-check_mk-automation" do
 end
 
 # TODO: Find a better way to configure users
-sysadmins = search(:users, 'groups:sysadmin')
+sysadmins = search(:users, 'groups:sysadmin OR (groups:check_mk AND groups:automation)')
 
 directory ::File.dirname(node['check_mk']['server']['paths']['htpasswd_file']) do
   action :create
