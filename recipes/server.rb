@@ -22,7 +22,6 @@ include_recipe "check_mk::agent"
 execute "restart-check_mk" do
   action :nothing
   command "check_mk -R"
-  cwd node['check_mk']['server']['conf']['dir']
   timeout 3600
   returns 0
   ignore_failure true
@@ -31,7 +30,6 @@ end
 execute "inventorize-check_mk" do
   action :nothing
   command "check_mk -II"
-  cwd node['check_mk']['server']['conf']['dir']
   timeout 3600
   returns 0
   notifies :run, "execute[restart-check_mk]"
