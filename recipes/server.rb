@@ -72,7 +72,7 @@ sudo "www-data-check_mk-automation" do
 end
 
 # TODO: Find a better way to configure users
-sysadmins = search(:users, 'groups:sysadmin')
+sysadmins = search(:users, 'groups:admins')
 
 file node['check_mk']['www']['auth'] do
   action :create
