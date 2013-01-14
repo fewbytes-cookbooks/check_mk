@@ -12,4 +12,3 @@ template "/etc/xinetd.d/livestatus" do
   )
   notifies :restart, "service[xinetd]"
 end
-

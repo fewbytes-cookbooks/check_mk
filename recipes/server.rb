@@ -89,7 +89,8 @@ template node['check_mk']['server']['paths']['multisite_config_file'] do
   group "root"
   mode "0644"
   variables(
-    :admin_users => sysadmins.map { |user| user['id'] }
+    :admin_users => sysadmins.map { |user| user['id'] },
+    :sites => search(:node, 'cluster_services:check-mk-server')
   )
 end
 
