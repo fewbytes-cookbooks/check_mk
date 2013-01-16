@@ -83,17 +83,6 @@ template node['check_mk']['server']['paths']['apache_config_file'] do
   notifies :reload, "service[apache2]"
 end
 
-template node['check_mk']['server']['paths']['multisite_config_file'] do
-  source "multisite.mk.erb"
-  owner "root"
-  group "root"
-  mode "0644"
-  variables(
-    :admin_users => sysadmins.map { |user| user['id'] },
-    :sites => search(:node, 'cluster_services:check-mk-server')
-  )
-end
-
 agents = 
   if (node['check_mk']['scope'] and
       node['check_mk']['scope'].respond_to?(:split) and
@@ -130,6 +119,17 @@ if pseudo_agents_search.any?
       n#othing
     end
   end.sort_by{|n| n['fqdn'] }
+end
+
+template node['check_mk']['server']['paths']['multisite_config_file'] do
+  source "multisite.mk.erb"
+  owner "root"
+  group "root"
+  mode "0644"
+  variables(
+    :admin_users => sysadmins.map { |user| user['id'] },
+    :sites => search(:node, 'cluster_services:check-mk-server')
+  )
 end
 
 template node['check_mk']['server']['paths']['main_config_file'] do
