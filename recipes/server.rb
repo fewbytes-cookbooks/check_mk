@@ -138,7 +138,8 @@ template node['check_mk']['server']['paths']['main_config_file'] do
   group "root"
   mode "0644"
   variables(
-    :nodes => agents + pseudo_agents
+    :nodes => agents + pseudo_agents,
+    :server => node
   )
   notifies :run, "execute[inventorize-check_mk]"
 end

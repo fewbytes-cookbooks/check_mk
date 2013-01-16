@@ -23,6 +23,11 @@ def build_args(args)
     map { |_, e| prepare_print(e) }.join(', ')
 end
 
+def build_array_args(args)
+  # args are expected to be an Array
+  args.map { |e| prepare_print(e) }.join(', ')
+end
+
 def mk_config(n, conf)
   n['check_mk'] and n['check_mk']['config'] and n['check_mk']['config'][conf]
 end
@@ -39,6 +44,12 @@ def add_extra_service_conf(conf, params)
   @extra_service_conf[conf].push(params)
 end
 
+@clustered_services = {}
+def add_clustered_service(clustered_service, n)
+  @clustered_services[clustered_service] ||= Array.new
+  @clustered_services[clustered_service].push(n['fqdn'])
+end
+
 @nodes.select{ |n| mk_config(n, 'extra_service_conf') }.each do |n|
   mk_config(n, 'extra_service_conf').each do |check, conf|
     conf.each do |k, v|
@@ -50,6 +61,12 @@ end
 @nodes.select{ |n| mk_config(n, 'extra_host_conf') }.each do |n|
   mk_config(n, 'extra_host_conf').each do |k, v|
     add_extra_host_conf(k, :fqdn => n['fqdn'], :value => v)
+  end
+end
+
+@nodes.select{ |n| mk_config(n, 'clustered_services') }.each do |n|
+  mk_config(n, 'clustered_services').each do |clustered_service|
+    add_clustered_service(clustered_service, n)
   end
 end
 -%>
@@ -110,3 +127,18 @@ extra_host_conf["<%=k%>"] = [
 <%  end -%>
 ]
 <% end -%>
+
+clusters = {}
+<% @nodes.select{|e| mk_config(e, 'clusters') and mk_config(e, 'clusters').any? }.
+  map { |e| mk_config(e, 'clusters') }.
+    flatten.uniq.each do |cluster| -%>
+clusters["<%=cluster%>"] = [ <%=build_array_args(
+  @nodes.select { |e| mk_config(e, 'clusters') and mk_config(e, 'clusters').
+    member?(cluster) }.map { |e| e['fqdn'] })%> ]
+<% end -%>
+
+clustered_services = [
+<% @clustered_services.each do |clustered_service, nodes| -%>
+  ( [ <%=build_array_args(nodes)%> ], [ "<%=clustered_service%>" ]),
+<% end -%>
+]
