@@ -129,7 +129,7 @@ if pseudo_agents_search.any?
 
       n#othing
     end
-  end.sort{|a,b| a['fqdn'] <=> b['fqdn'] }
+  end.sort_by{|n| n['fqdn'] }
 end
 
 template node['check_mk']['server']['paths']['main_config_file'] do
