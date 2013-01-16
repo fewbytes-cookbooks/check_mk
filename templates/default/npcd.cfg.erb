@@ -163,7 +163,7 @@ pid_file=/var/run/npcd.pid
 # perfdata_file = </path/to/file>
 #
 
-perfdata_file = /var/spool/pnp4nagios/nagios/perfdata.dump
+perfdata_file = <%=node['check_mk']['pnp4nagios']['perfdata_file']%>
 
 
 # perfdata_spool_filename - declare the destination
