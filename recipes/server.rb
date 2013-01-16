@@ -94,7 +94,18 @@ template node['check_mk']['server']['paths']['multisite_config_file'] do
   )
 end
 
-agents = all_providers_for_service('check-mk-agent').sort {|a,b| a.name <=> b.name }
+agents = 
+  if (node['check_mk']['scope'] and
+      node['check_mk']['scope'].respond_to?(:split) and
+      node['check_mk']['scope'].length > 0)
+
+    env_scope = node['check_mk']['scope'].split(',').
+      map{ |e| "chef_environment:#{e}" }.join(' OR ')
+    search(:node, "cluster_services:check-mk-agent AND (#{env_scope})")
+  else
+    search(:node, "cluster_services:check-mk-agent")
+  end.sort_by {|n| n['fqdn']}
+
 pseudo_agents = []
 
 pseudo_agents_search =

@@ -1,0 +1,1 @@
+default['check_mk']['scope'] = chef_environment

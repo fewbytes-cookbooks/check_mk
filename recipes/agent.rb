@@ -12,7 +12,7 @@ template "/etc/xinetd.d/check_mk" do
   group "root"
   mode "0644"
   variables(
-    :only_from => all_providers_for_service('check-mk-server').map { |n| n.ip_for_node(node) }
+    :only_from => search(:node, 'cluster_services:check-mk-server').map { |n| n.ip_for_node(node) }
   )
   notifies :restart, "service[xinetd]"
 end
