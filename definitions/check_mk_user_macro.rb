@@ -28,6 +28,7 @@ define :check_mk_user_macro, :number => nil, :value => nil do
           user_macro_number => params[:value]
         }
       )
+      notifies :restart, "service[nagios3]"
     end
     retry
   end
