@@ -45,7 +45,9 @@ default["check_mk"]["server"]["paths"]["multisite_config_file"] = ::File.join(ch
 default["check_mk"]["server"]["paths"]["wato_snapshot_dir"] = ::File.join(check_mk["server"]["paths"]["var_dir"], "wato", "snapshots")
 
 default["check_mk"]["server"]["paths"]["nagios_cgi_config"] = "/etc/nagios3/cgi.cfg"
+default["check_mk"]["server"]["paths"]["nagios_resource_file"] = "/etc/nagios3/resource.cfg"
+default["check_mk"]["server"]["paths"]["nagios_plugins_dir"] = "/usr/lib/nagios/plugins"
+default["check_mk"]["server"]["paths"]["nagios_event_handlers_dir"] = "/usr/lib/nagios/plugins/eventhandlers"
 
-default["check_mk"]["nagios"]["plugins_dir"] = "/usr/lib/nagios/plugins"
 default["check_mk"]["nagios"]["extra_plugins"] = true
 default["check_mk"]["nagios"]["extra_plugins_package"] = "nagios-plugins-extra"

@@ -46,7 +46,7 @@ template node['check_mk']['server']['paths']['nagios_config_file'] do
   notifies :restart, "service[nagios3]"
 end
 
-file ::File.join(node['check_mk']['nagios']['plugins_dir'], "check_icmp") do
+file ::File.join(node["check_mk"]["server"]["paths"]["nagios_plugins_dir"], "check_icmp") do
   owner "root"
   group "root"
   mode "4755" # Executable, Suid

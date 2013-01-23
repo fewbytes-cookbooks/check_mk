@@ -143,3 +143,11 @@ template node['check_mk']['server']['paths']['main_config_file'] do
   )
   notifies :run, "execute[inventorize-check_mk]"
 end
+
+check_mk_user_macro "1" do
+  value node["check_mk"]["server"]["paths"]["nagios_plugins_dir"]
+end
+
+check_mk_user_macro "2" do
+  value node["check_mk"]["server"]["paths"]["nagios_event_handlers_dir"]
+end
