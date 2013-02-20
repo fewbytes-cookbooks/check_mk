@@ -122,6 +122,26 @@ if pseudo_agents_search.any?
   end.sort_by{|n| n['fqdn'] }
 end
 
+external_agents = []
+
+external_agents_search =
+  begin
+    search(:check_mk, "usage:external_agents AND chef_environment:#{node.chef_environment}")
+  rescue OpenURI::HTTPError
+    []
+  rescue Net::HTTPServerException
+    []
+  end
+
+if external_agents_search.any?
+  external_agents_search.select{ |n| n['agents'] }.each do |item|
+    external_agents += item['agents'].map do |_, n|
+      n['roles'] += ['external-agent'] rescue n['roles'] = ['external-agent']
+      n#othing
+    end
+  end.sort_by{|n| n['fqdn'] }
+end
+
 template node['check_mk']['server']['paths']['multisite_config_file'] do
   source "multisite.mk.erb"
   owner "root"
@@ -139,7 +159,7 @@ template node['check_mk']['server']['paths']['main_config_file'] do
   group "root"
   mode "0644"
   variables(
-    :nodes => agents + pseudo_agents,
+    :nodes => agents + pseudo_agents + external_agents,
     :server => node
   )
   notifies :run, "execute[inventorize-check_mk]"
