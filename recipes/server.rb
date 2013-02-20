@@ -110,6 +110,7 @@ if pseudo_agents_search.any?
   pseudo_agents_search.select{ |n| n['agents'] }.each do |item|
     pseudo_agents += item['agents'].map do |_, n|
       n['roles'] += ['pseudo-agent'] rescue n['roles'] = ['pseudo-agent']
+      n['roles'] += ['ping'] unless n['roles'].include?("ping")
 
       n['check_mk'] ||= {}
       n['check_mk']['config'] ||= {}
