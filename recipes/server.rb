@@ -83,6 +83,10 @@ template node['check_mk']['server']['paths']['apache_config_file'] do
   notifies :reload, "service[apache2]"
 end
 
+# Select all the current check_mk agents
+# Scope the selection, optionaly, from environments
+# Filter the returned hosts and reject those marked "ignored" (node['check_mk']['ignored'] = true)
+# Sort by fqdn
 agents = 
   if (node['check_mk']['scope'] and
       node['check_mk']['scope'].respond_to?(:split) and
@@ -93,7 +97,7 @@ agents =
     search(:node, "cluster_services:check-mk-agent AND (#{env_scope})")
   else
     search(:node, "cluster_services:check-mk-agent")
-  end.sort_by {|n| n['fqdn']}
+  end.reject{|n| n['check_mk'] and n['check_mk']['ignored'] }.sort_by {|n| n['fqdn']}
 
 pseudo_agents = []
 
