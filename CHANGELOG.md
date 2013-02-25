@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of check_mk.
 
+## 0.3.0:
+
+  * Added attribute to make recipe ignore nodes (node['check_mk']['ignore'])
+
 ## 0.2.1:
 
   * Mismatch in tag 0.2.0, bumped patch version
