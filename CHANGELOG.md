@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of check_mk.
 
+## 0.4.0:
+
+  * Added support for check_parameters
+
 ## 0.3.0:
 
   * Added attribute to make recipe ignore nodes (node['check_mk']['ignore'])

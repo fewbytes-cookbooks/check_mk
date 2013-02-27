@@ -97,6 +97,9 @@ checks += [
 
 check_parameters += [
 <% @nodes.select { |n| mk_config(n, 'check_parameters') }.each do |n| -%>
+<%  n['check_mk']['config']['check_parameters'].each do |check, parameters| -%>
+  ( <%=parameters%>, [ "<%=n['fqdn']%>" ], [ "<%=check%>" ] ),
+<%  end -%>
 <% end -%>
 ]
 
