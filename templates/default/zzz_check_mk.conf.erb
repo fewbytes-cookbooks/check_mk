@@ -24,7 +24,7 @@
         allow from all
 	AuthName "Nagios Access"
         AuthType Basic
-        AuthUserFile /etc/nagios3/htpasswd.users
+        AuthUserFile <%=node["check_mk"]["server"]["paths"]["htpasswd_file"]%>
         require valid-user
 
 	ErrorDocument 403 "<h1>Authentication Problem</h1>Either you've entered an invalid password or the authentication<br>configuration of your check_mk web pages is incorrect.<br><br>Please make sure that you've edited the file<br><tt>/etc/apache2/conf.d/check_mk</tt> and made it use the same<br>authentication settings as your Nagios web pages.<br>Restart Apache afterwards."
