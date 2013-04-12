@@ -1,3 +1,4 @@
+include_recipe "source"
 include_recipe "apache2"
 include_recipe "apache2::mod_proxy"
 include_recipe "apache2::mod_proxy_http"
