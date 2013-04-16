@@ -65,11 +65,10 @@ cookbook_file ::File.join(node['check_mk']['server']['paths']['nagios_conf_dir']
   notifies :reload, "service[nagios3]"
 end
 
-if node['check_mk']['nagios']['extra_plugins']
-  package node['check_mk']['nagios']['extra_plugins_package'] do
-    action :install
-    notifies :restart, "service[nagios3]"
-  end
+package node['check_mk']['nagios']['extra_plugins_package'] do
+  action :install
+  notifies :restart, "service[nagios3]"
+  only_if { node['check_mk']['nagios']['extra_plugins'] }
 end
 
 service "nagios3" do
