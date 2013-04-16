@@ -32,12 +32,11 @@ template ::File.join(node['apache']['dir'], "conf.d", "pnp4nagios.conf") do
   notifies :reload, "service[apache2]"
 end
 
-if node.platform? "ubuntu", "debian"
-  template "/etc/default/npcd" do
-    mode "0644"
-    source "npcd.default.erb"
-    notifies :restart, "service[npcd]"
-  end
+template "/etc/default/npcd" do
+  mode "0644"
+  source "npcd.default.erb"
+  notifies :restart, "service[npcd]"
+  only_if { platform? "ubuntu", "debian" }
 end
 
 service "npcd"
