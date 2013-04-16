@@ -55,7 +55,11 @@ sudo "www-data-check_mk-automation" do
 end
 
 # TODO: Find a better way to configure users
-sysadmins = search(:users, 'groups:sysadmin OR (groups:check_mk AND groups:automation)')
+sysadmins = if Chef::Config[:solo]
+              Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+            else
+              search(:users, 'groups:sysadmin OR (groups:check_mk AND groups:automation)')
+            end
 
 directory ::File.dirname(node['check_mk']['server']['paths']['htpasswd_file']) do
   action :create
