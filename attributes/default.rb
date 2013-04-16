@@ -1,1 +1,1 @@
-default['check_mk']['scope'] = chef_environment
+default['check_mk']['scope'] = node.chef_environment
