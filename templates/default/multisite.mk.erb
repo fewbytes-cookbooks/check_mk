@@ -3,3 +3,20 @@ admin_users += [
   "<%=user%>",
 <% end -%>
 ]
+
+<% if @sites.size > 1 -%>
+sites = {
+<%  @sites.each do |site| -%>
+<%    if site['fqdn'] == node['fqdn'] -%>
+  "<%=site['fqdn']%>" : {
+    "alias": "<%=site.chef_environment%>"
+  },
+<%    else -%>
+  "<%=site['fqdn']%>" : {
+    "alias": "<%=site.chef_environment%>",
+    "socket": "tcp:<%=site.ip_for_node(node)%>:6557"
+  },
+<%    end -%>
+<%  end -%>
+}
+<% end -%>

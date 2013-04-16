@@ -1,3 +1,4 @@
+include_recipe "source"
 include_recipe "apache2"
 include_recipe "apache2::mod_proxy"
 include_recipe "apache2::mod_proxy_http"
@@ -22,7 +23,6 @@ include_recipe "check_mk::agent"
 execute "restart-check_mk" do
   action :nothing
   command "check_mk -R"
-  cwd node['check_mk']['server']['conf']['dir']
   timeout 3600
   returns 0
   ignore_failure true
@@ -31,21 +31,12 @@ end
 execute "inventorize-check_mk" do
   action :nothing
   command "check_mk -II"
-  cwd node['check_mk']['server']['conf']['dir']
   timeout 3600
   returns 0
   notifies :run, "execute[restart-check_mk]"
 end
 
-directory ::File.dirname(node['check_mk']['www']['auth']) do
-  action :create
-  owner "root"
-  group "root"
-  mode "0755"
-  recursive true
-end
-
-directory ::File.dirname(node['check_mk']['server']['conf']['unix_socket']) do
+directory ::File.dirname(node['check_mk']['server']['paths']['livestatus_unix_socket']) do
   owner node['check_mk']['server']['user']
   group node['check_mk']['server']['group']
   mode "0755"
@@ -64,9 +55,17 @@ sudo "www-data-check_mk-automation" do
 end
 
 # TODO: Find a better way to configure users
-sysadmins = search(:users, 'groups:sysadmin')
+sysadmins = search(:users, 'groups:sysadmin OR (groups:check_mk AND groups:automation)')
 
-file node['check_mk']['www']['auth'] do
+directory ::File.dirname(node['check_mk']['server']['paths']['htpasswd_file']) do
+  action :create
+  owner node['check_mk']['server']['user']
+  group node['check_mk']['server']['group']
+  mode "0775"
+  recursive true
+end
+
+file node['check_mk']['server']['paths']['htpasswd_file'] do
   action :create
   backup 5
   owner node['check_mk']['server']['user']
@@ -75,27 +74,32 @@ file node['check_mk']['www']['auth'] do
   content sysadmins.map{|u| "#{u['id']}:#{u['htpasswd']}"}.join("\n")
 end
 
-template node['check_mk']['www']['conf'] do
+template node['check_mk']['server']['paths']['apache_config_file'] do
   owner "root"
   group "root"
   mode "0644"
   variables(
-    :authfile => node['check_mk']['www']['auth']
+    :authfile => node['check_mk']['server']['paths']['htpasswd_file']
   )
   notifies :reload, "service[apache2]"
 end
 
-template node['check_mk']['server']['conf']['multisite'] do
-  source "multisite.mk.erb"
-  owner "root"
-  group "root"
-  mode "0644"
-  variables(
-    :admin_users => sysadmins.map { |user| user['id'] }
-  )
-end
+# Select all the current check_mk agents
+# Scope the selection, optionaly, from environments
+# Filter the returned hosts and reject those marked "ignored" (node['check_mk']['ignored'] = true)
+# Sort by fqdn
+agents = 
+  if (node['check_mk']['scope'] and
+      node['check_mk']['scope'].respond_to?(:split) and
+      node['check_mk']['scope'].length > 0)
 
-agents = all_providers_for_service('check-mk-agent').sort {|a,b| a.name <=> b.name }
+    env_scope = node['check_mk']['scope'].split(',').
+      map{ |e| "chef_environment:#{e}" }.join(' OR ')
+    search(:node, "cluster_services:check-mk-agent AND (#{env_scope})")
+  else
+    search(:node, "cluster_services:check-mk-agent")
+  end.reject{|n| n['check_mk'] and n['check_mk']['ignored'] }.sort_by {|n| n['fqdn']}
+
 pseudo_agents = []
 
 pseudo_agents_search =
@@ -111,6 +115,7 @@ if pseudo_agents_search.any?
   pseudo_agents_search.select{ |n| n['agents'] }.each do |item|
     pseudo_agents += item['agents'].map do |_, n|
       n['roles'] += ['pseudo-agent'] rescue n['roles'] = ['pseudo-agent']
+      n['roles'] += ['ping'] unless n['roles'].include?("ping")
 
       n['check_mk'] ||= {}
       n['check_mk']['config'] ||= {}
@@ -119,16 +124,56 @@ if pseudo_agents_search.any?
 
       n#othing
     end
-  end.sort{|a,b| a['fqdn'] <=> b['fqdn'] }
+  end.sort_by{|n| n['fqdn'] }
 end
 
-template node['check_mk']['server']['conf']['main'] do
+external_agents = []
+
+external_agents_search =
+  begin
+    search(:check_mk, "usage:external_agents AND chef_environment:#{node.chef_environment}")
+  rescue OpenURI::HTTPError
+    []
+  rescue Net::HTTPServerException
+    []
+  end
+
+if external_agents_search.any?
+  external_agents_search.select{ |n| n['agents'] }.each do |item|
+    external_agents += item['agents'].map do |_, n|
+      n['roles'] += ['external-agent'] rescue n['roles'] = ['external-agent']
+      n#othing
+    end
+  end.sort_by{|n| n['fqdn'] }
+end
+
+template node['check_mk']['server']['paths']['multisite_config_file'] do
+  source "multisite.mk.erb"
+  owner "root"
+  group "root"
+  mode "0644"
+  variables(
+    :admin_users => sysadmins.map { |user| user['id'] },
+    :sites => search(:node, 'cluster_services:check-mk-server')
+  )
+end
+
+template node['check_mk']['server']['paths']['main_config_file'] do
   source "main.mk.erb"
   owner "root"
   group "root"
   mode "0644"
   variables(
-    :nodes => agents + pseudo_agents
+    :nodes => agents + pseudo_agents + external_agents,
+    :server => node
   )
   notifies :run, "execute[inventorize-check_mk]"
+end
+
+check_mk_user_macro "1" do
+  value node["check_mk"]["server"]["paths"]["nagios_plugins_dir"]
+end
+
+check_mk_user_macro "2" do
+  value node["check_mk"]["server"]["paths"]["nagios_event_handlers_dir"]
 end

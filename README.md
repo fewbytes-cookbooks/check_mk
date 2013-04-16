@@ -107,6 +107,36 @@ These attributes configure various related variables per host. On some of them, 
 * `check_name` - The check as will be seen in Nagios (Check_MK).
 * Last level of attributes are the check parameters (only values are used). This structure is used to enable overriding specific values from high-level attributes.
 
+#### [check_parameters](http://mathias-kettner.de/checkmk_configvars.html#check_parameters)
+
+    'check_mk': {
+        'config': {
+            'check_parameters': {
+                'service_pattern': 'parameters'
+            }
+        }
+    }
+
+* `service_pattern` - The service pattern as explained on Check\_MK documentation.
+* `parameters` - Taken as is and placed as the first item in the check\_parameters tuple.
+
+#### [extra\_service\_conf](http://mathias-kettner.de/checkmk_configvars.html#extra_service_conf)
+
+    'check_mk': {
+        'config': {
+            'extra_service_conf': {
+                'service_name': {
+                    'active_checks_enabled': '0',
+                    'is_volatile': '1'
+                }
+            }
+        }
+    }
+
+Hash of key value pairs for configuration variables that will be attached to this service check.
+
+* `service_name` - The service name as Nagios sees it
+
 #### [legacy_checks](http://mathias-kettner.de/checkmk_legacy_checks.html)
 
     'check_mk': {
@@ -125,10 +155,16 @@ These attributes configure various related variables per host. On some of them, 
 
 * `check_name` - The service name
 * `performance` - Flag for a performance check or not (Default: False). See legacy checks page.
-* `extra_service_conf` - Hash of key value pairs for configuration variables that will be attached to this check.
+* `extra_service_conf` - Same as extra\_service\_conf above, but applied to this legacy check specifically.
+
+#### Forcibally ignoring a node from Check\_MK
+
+    'check_mk': {
+        'ignore': true
+    }
 
 Pseudo agents configuration
---------------------------
+---------------------------
 
 Many times you have some external device or a port on a load-balancer you'd like to monitor, in which case you cannot use the agent recipe. For this you can use psuedo agents through the check_mk data bag.
 
@@ -176,6 +212,37 @@ An example for a data bag item
         * `ipv4` - Optional. Normally, the cookbook tries to find the best ip address to use, but since this is not a real node you must supply a real IP address (or hostname) if fqdn cannot be resolved.
         * `check_mk` - An attribute tree which is treated exactly as it would be in a node's attributes.
 
+External agents configuration
+-----------------------------
+
+External agents are treated the same as peudo agents with a small difference. Pseudo agents are expected to be non-inventorizable, external agents are treated as normal Check\_MK agents.
+
+This falls under the use-case where you want to monitor hosts that are not part of the Chef cluster. Such nodes need minimal configuration as they will be inventorized by Check\_MK.
+
+The following is a simple example of an external agent data bag item.
+
+    {
+        'id': 'some data bag item id',
+        'usage': [
+            'external_agents'
+        ],
+        'chef_environment': [
+            '_default'
+        ],
+        'agents': {
+            'arbitrary.agent.name': {
+                'fqdn': "somehost.somedomain",
+                'ipv4': "ip.add.re.ss",
+                'check_mk': {
+                    'tags': ["sometag"]
+                }
+            },
+            'another.agent': {
+                # ...
+            }
+        }
+    }
+
 Usage
 =====
 
@@ -203,7 +270,6 @@ TODO
 Configuration variables
 -----------------------
 
-* check_parameters
 * agent_ports
 * dyndns_hosts
 * ping_levels

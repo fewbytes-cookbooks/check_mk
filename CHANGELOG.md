@@ -2,10 +2,24 @@
 
 This file is used to list changes made in each version of check_mk.
 
-## 0.X.X:
+## 0.4.0:
+
+  * Added support for check_parameters
+
+## 0.3.0:
+
+  * Added attribute to make recipe ignore nodes (node['check_mk']['ignore'])
+
+## 0.2.1:
+
+  * Mismatch in tag 0.2.0, bumped patch version
+
+## 0.2.0:
   
   * Added a dependency on sudo cookbook
   * Added node level extra_service_conf
+  * Added external agents feature
+  * Removed inventorizing pseudo agents
 
 ## 0.1.1:
 

@@ -11,7 +11,7 @@ Alias /pnp4nagios "/usr/share/pnp4nagios/html"
    	#
    	AuthName "Nagios Access"
    	AuthType Basic
-    AuthUserFile <%= node['check_mk']['www']['auth'] %>
+    AuthUserFile <%= node['check_mk']['server']['paths']['htpasswd_file'] %>
    	Require valid-user
 	<IfModule mod_rewrite.c>
 		# Turn on URL rewriting

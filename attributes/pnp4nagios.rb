@@ -1,6 +1,7 @@
 default['check_mk']['pnp4nagios']['perfdata_dir'] = "/var/lib/pnp4nagios/perfdata"
 default['check_mk']['pnp4nagios']['npcd_config_file'] = "/etc/pnp4nagios/npcd.cfg"
-default['check_mk']['pnp4nagios']['npcd_spool_dir'] = "/var/spool/pnp4nagios/npcd"
+default['check_mk']['pnp4nagios']['npcd_spool_dir'] = "/var/spool/pnp4nagios/npcd/"
+default['check_mk']['pnp4nagios']['perfdata_file'] = "/var/spool/pnp4nagios/nagios/perfdata.dump"
 default['check_mk']['pnp4nagios']['log_dir'] = "/var/log/pnp4nagios"
 default['check_mk']['pnp4nagios']['npcd_broker_library'] = case platform
                                                    when "ubuntu", "debian"
