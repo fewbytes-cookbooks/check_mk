@@ -1,3 +1,4 @@
+name             "check_mk"
 maintainer       "Fewbytes"
 maintainer_email "chef@fewbytes.com"
 license          "All rights reserved"
