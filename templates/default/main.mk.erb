@@ -89,7 +89,7 @@ checks += [
 <% @nodes.select { |n| mk_config(n, 'checks') }.each do |n| -%>
 <%  n['check_mk']['config']['checks'].each do |check, check_args| -%>
 <%    check_args.each do |name, args| -%>
-  ( "<%=n['fqdn']%>", "<%=check%>", "<%=name%>", ( <%=build_args(args)%> ) ),
+  ( "<%=n['fqdn']%>", "<%=check%>", <%=prepare_print(name)%>, ( <%=build_args(args)%> ) ),
 <%    end -%>
 <%  end -%>
 <% end -%>
