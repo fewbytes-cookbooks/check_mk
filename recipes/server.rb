@@ -17,7 +17,9 @@ source_package "check_mk" do
   notifies :restart, "service[apache2]"
 end
 
-provide_service "check-mk-server"
+Check_MK::Discovery.register_server
+node.save
+
 include_recipe "check_mk::agent"
 
 execute "restart-check_mk" do
@@ -92,17 +94,7 @@ end
 # Scope the selection, optionaly, from environments
 # Filter the returned hosts and reject those marked "ignored" (node['check_mk']['ignored'] = true)
 # Sort by fqdn
-agents = 
-  if (node['check_mk']['scope'] and
-      node['check_mk']['scope'].respond_to?(:split) and
-      node['check_mk']['scope'].length > 0)
-
-    env_scope = node['check_mk']['scope'].split(',').
-      map{ |e| "chef_environment:#{e}" }.join(' OR ')
-    search(:node, "cluster_services:check-mk-agent AND (#{env_scope})")
-  else
-    search(:node, "cluster_services:check-mk-agent")
-  end.reject{|n| n['check_mk'] and n['check_mk']['ignored'] }.sort_by {|n| n['fqdn']}
+agents = Check_MK::Discovery.agents.reject{|n| n['check_mk'] and n['check_mk']['ignored'] }.sort_by {|n| n['fqdn']}
 
 pseudo_agents = []
 
@@ -158,7 +150,7 @@ template node['check_mk']['server']['paths']['multisite_config_file'] do
   mode "0644"
   variables(
     :admin_users => sysadmins.map { |user| user['id'] },
-    :sites => search(:node, 'cluster_services:check-mk-server')
+    :sites => Check_MK::Discovery.servers
   )
 end
 

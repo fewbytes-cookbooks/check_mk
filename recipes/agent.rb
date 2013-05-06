@@ -4,8 +4,6 @@ package "check-mk-agent" do
   action :install
 end
 
-provide_service "check-mk-agent"
-
 check_mk_servers = if Chef::Config[:solo]
                     Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
                   else
@@ -30,4 +28,5 @@ directory node['check_mk']['agent']['conf_dir'] do
   mode "0755"
 end
 
+Check_MK::Discovery.register_agent
 node.save
