@@ -28,5 +28,37 @@ module Check_MK
         node.override['check_mk']['discovery']['provides'] += 'agent'
       end
     end
+
+    def cloud_location(n)
+      case n["cloud"]["provider"]
+        when "ec2"  #compare regions
+          n["ec2"]["placement_availability_zone"][/([a-z]{2}-[a-z]+-[0-9])[a-z]/,1]
+        #when adding new multi-region cloud providers - add cases here
+        when nil
+          false
+        else
+          n["cloud"]["provider"] #various single-region providers
+      end rescue false # in case n["cloud"] is nil
+    end
+
+    def relative_hostname(other_node, n=node)
+      if not cloud_location(n)
+        n["hostname"]
+      elsif cloud_location(n) == cloud_location(other_node)
+        n["cloud"]["local_hostname"]
+      else
+        n["cloud"]["public_hostname"]
+      end
+    end
+
+    def relative_ipv4(other_node, n=node)
+      if not cloud_location(n)
+        n["ipaddress"]
+      elsif cloud_location(n) == cloud_location(other_node)
+        n["cloud"]["local_ipv4"]
+      else
+        n["cloud"]["public_ipv4"]
+      end
+    end
   end
 end
