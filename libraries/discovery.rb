@@ -9,11 +9,21 @@ module Check_MK
     end
 
     def agents
-      search(:node, "check_mk_discovery_provides:agent AND #{environments}")
+      if Chef::Config[:solo]
+        Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+        []
+      else
+        search(:node, "check_mk_discovery_provides:agent AND (#{environments})")
+      end
     end
 
     def servers
-      search(:node, "check_mk_discovery_provides:server AND (#{environments})")
+      if Chef::Config[:solo]
+        Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+        []
+      else
+        search(:node, "check_mk_discovery_provides:server AND (#{environments})")
+      end
     end
 
     def environments

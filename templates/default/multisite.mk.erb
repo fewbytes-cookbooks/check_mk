@@ -14,7 +14,7 @@ sites = {
 <%    else -%>
   "<%=site['fqdn']%>" : {
     "alias": "<%=site.chef_environment%>",
-    "socket": "tcp:<%=site.ip_for_node(node)%>:6557"
+    "socket": "tcp:<%=Check_MK::Discovery.relative_ipv4(site, node)%>:6557"
   },
 <%    end -%>
 <%  end -%>
