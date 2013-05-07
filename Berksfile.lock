@@ -1,0 +1,6 @@
+cookbook 'check_mk', :path => '/home/orc/sources/cookbooks/check_mk'
+cookbook 'source', :git => 'git://github.com/fewbytes-cookbooks/source.git', :ref => '7e5e4bccf57718cacc246f1b4d501ff7de8ac13d'
+cookbook 'apache2', :locked_version => '1.6.2'
+cookbook 'xinetd', :locked_version => '0.0.1'
+cookbook 'sudo', :locked_version => '2.1.0'
+cookbook 'build-essential', :locked_version => '1.4.0'
