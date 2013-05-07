@@ -17,8 +17,13 @@ source_package "check_mk" do
   notifies :restart, "service[apache2]"
 end
 
-Check_MK::Discovery.register_server
-node.save
+Check_MK::Discovery.register_server(node)
+
+if Chef::Config[:solo]
+  Chef::Log.warn("This recipe uses search. Chef Solo does not support save.")
+else
+  node.save
+end
 
 include_recipe "check_mk::agent"
 
@@ -59,6 +64,7 @@ end
 # TODO: Find a better way to configure users
 sysadmins = if Chef::Config[:solo]
               Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+              []
             else
               search(:users, 'groups:sysadmin OR (groups:check_mk AND groups:automation)')
             end
@@ -94,7 +100,7 @@ end
 # Scope the selection, optionaly, from environments
 # Filter the returned hosts and reject those marked "ignored" (node['check_mk']['ignored'] = true)
 # Sort by fqdn
-agents = Check_MK::Discovery.agents.reject{|n| n['check_mk'] and n['check_mk']['ignored'] }.sort_by {|n| n['fqdn']}
+agents = Check_MK::Discovery.agents(node).reject{|n| n['check_mk'] and n['check_mk']['ignored'] }.sort_by {|n| n['fqdn']}
 
 pseudo_agents = []
 
