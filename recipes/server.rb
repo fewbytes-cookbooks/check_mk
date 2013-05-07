@@ -105,12 +105,11 @@ agents = Check_MK::Discovery.agents(node).reject{|n| n['check_mk'] and n['check_
 pseudo_agents = []
 
 pseudo_agents_search =
-  begin
+  if Chef::Config[:solo]
+    Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+    []
+  else
     search(:check_mk, "usage:pseudo_agents AND chef_environment:#{node.chef_environment}")
-  rescue OpenURI::HTTPError
-    []
-  rescue Net::HTTPServerException
-    []
   end
 
 if pseudo_agents_search.any?
@@ -132,12 +131,11 @@ end
 external_agents = []
 
 external_agents_search =
-  begin
+  if Chef::Config[:solo]
+    Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+    []
+  else
     search(:check_mk, "usage:external_agents AND chef_environment:#{node.chef_environment}")
-  rescue OpenURI::HTTPError
-    []
-  rescue Net::HTTPServerException
-    []
   end
 
 if external_agents_search.any?
@@ -156,7 +154,7 @@ template node['check_mk']['server']['paths']['multisite_config_file'] do
   mode "0644"
   variables(
     :admin_users => sysadmins.map { |user| user['id'] },
-    :sites => Check_MK::Discovery.servers
+    :sites => Check_MK::Discovery.servers(node)
   )
 end
 
