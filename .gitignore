@@ -7,3 +7,5 @@
 *.un~
 /cookbooks
 /test/kitchen/.kitchen
+.kitchen/
+.kitchen.local.yml

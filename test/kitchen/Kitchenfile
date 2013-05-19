@@ -1,3 +1,0 @@
-cookbook "check_mk" do
-  configuration "agent"
-end
