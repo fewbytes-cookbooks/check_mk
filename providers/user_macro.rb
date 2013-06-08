@@ -4,7 +4,11 @@ action :create do
 
   # The magic!
   begin
-    t = resources(:template => template_file)
+    t = if Chef::VERSION.split(".").first.to_i < 11
+      resources(:template => template_file)
+    else
+      run_context.resource_collection.find(:template => template_file)
+    end
 
     # Warn if we are about to override a previously configured USER macro
     log "Nagios macro '#{new_resource.number} was overridden" do
@@ -17,6 +21,7 @@ action :create do
       group "root"
       mode "0644"
       cookbook "check_mk"
+      variables :macros => Hash.new, :plugins => Hash.new
     end
     retry
   end
