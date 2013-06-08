@@ -15,13 +15,43 @@ default["check_mk"]["server"]["paths"]["web_dir"] = "/usr/share/check_mk/web"
 default["check_mk"]["server"]["paths"]["check_manpages_dir"] = "/usr/share/doc/check_mk/checks"
 default["check_mk"]["server"]["paths"]["lib_dir"] = "/usr/lib/check_mk"
 default["check_mk"]["server"]["paths"]["pnp_templates_dir"] = "/usr/share/check_mk/pnp-templates"
-default["check_mk"]["server"]["paths"]["nagios_startscript"] = "/etc/init.d/nagios3"
-default["check_mk"]["server"]["paths"]["nagios_binary"] = "/usr/sbin/nagios3"
+case node.platform_family
+when "debian"
+  default["check_mk"]["server"]["paths"]["nagios_startscript"] = "/etc/init.d/nagios3"
+  default["check_mk"]["server"]["paths"]["nagios_binary"] = "/usr/sbin/nagios3"
+  default["check_mk"]["server"]["paths"]["nagios_config_file"] = "/etc/nagios3/nagios.cfg"
+  default["check_mk"]["server"]["paths"]["nagios_conf_dir"] = "/etc/nagios3/conf.d"
+  default["check_mk"]["server"]["paths"]["nagios_cgi_config"] = "/etc/nagios3/cgi.cfg"
+  default["check_mk"]["server"]["paths"]["nagios_resource_file"] = "/etc/nagios3/resource.cfg"
+  default["check_mk"]["server"]["paths"]["nagios_plugins_dir"] = "/usr/lib/nagios/plugins"
+  default["check_mk"]["server"]["paths"]["nagios_event_handlers_dir"] = "/usr/lib/nagios/plugins/eventhandlers"
+when "rhel", "fedora"
+  default["check_mk"]["server"]["paths"]["nagios_startscript"] = "/etc/init.d/nagios"
+  default["check_mk"]["server"]["paths"]["nagios_binary"] = "/usr/sbin/nagios"
+  default["check_mk"]["server"]["paths"]["nagios_config_file"] = "/etc/nagios/nagios.cfg"
+  default["check_mk"]["server"]["paths"]["nagios_conf_dir"] = "/etc/nagios/conf.d"
+  default["check_mk"]["server"]["paths"]["nagios_cgi_config"] = "/etc/nagios/cgi.cfg"
+  default["check_mk"]["server"]["paths"]["nagios_resource_file"] = "/etc/nagios/resource.cfg"
+  if node['kernel']['machine'] == 'i686'
+    default["check_mk"]["server"]["paths"]["nagios_plugins_dir"] = "/usr/lib/nagios/plugins"
+    default["check_mk"]["server"]["paths"]["nagios_event_handlers_dir"] = "/usr/lib/nagios/plugins/eventhandlers"
+  else
+    default["check_mk"]["server"]["paths"]["nagios_plugins_dir"] = "/usr/lib64/nagios/plugins"
+    default["check_mk"]["server"]["paths"]["nagios_event_handlers_dir"] = "/usr/lib64/nagios/plugins/eventhandlers"
+  end
+else
+  default["check_mk"]["server"]["paths"]["nagios_startscript"] = "/etc/init.d/nagios"
+  default["check_mk"]["server"]["paths"]["nagios_binary"] = "/usr/sbin/nagios"
+  default["check_mk"]["server"]["paths"]["nagios_config_file"] = "/etc/nagios/nagios.cfg"
+  default["check_mk"]["server"]["paths"]["nagios_conf_dir"] = "/etc/nagios/conf.d"
+  default["check_mk"]["server"]["paths"]["nagios_cgi_config"] = "/etc/nagios/cgi.cfg"
+  default["check_mk"]["server"]["paths"]["nagios_resource_file"] = "/etc/nagios/resource.cfg"
+  default["check_mk"]["server"]["paths"]["nagios_plugins_dir"] = "/usr/lib/nagios/plugins"
+  default["check_mk"]["server"]["paths"]["nagios_event_handlers_dir"] = "/usr/lib/nagios/plugins/eventhandlers"
+end
 
 default["check_mk"]["server"]["paths"]["default_config_dir"] = "/etc/check_mk"
 default["check_mk"]["server"]["paths"]["check_mk_configdir"] = "/etc/check_mk/conf.d"
-default["check_mk"]["server"]["paths"]["nagios_config_file"] = "/etc/nagios3/nagios.cfg"
-default["check_mk"]["server"]["paths"]["nagios_conf_dir"] = "/etc/nagios3/conf.d"
 default["check_mk"]["server"]["paths"]["apache_config_dir"] = "/etc/apache2/conf.d"
 default["check_mk"]["server"]["paths"]["apache_config_file"] = "/etc/apache2/conf.d/zzz_check_mk.conf"
 default["check_mk"]["server"]["paths"]["htpasswd_file"] = "/etc/nagios/htpasswd.users"
@@ -44,10 +74,6 @@ default["check_mk"]["server"]["paths"]["main_config_file"] = ::File.join(check_m
 default["check_mk"]["server"]["paths"]["multisite_config_file"] = ::File.join(check_mk["server"]["paths"]["default_config_dir"], "multisite.mk")
 default["check_mk"]["server"]["paths"]["wato_snapshot_dir"] = ::File.join(check_mk["server"]["paths"]["var_dir"], "wato", "snapshots")
 
-default["check_mk"]["server"]["paths"]["nagios_cgi_config"] = "/etc/nagios3/cgi.cfg"
-default["check_mk"]["server"]["paths"]["nagios_resource_file"] = "/etc/nagios3/resource.cfg"
-default["check_mk"]["server"]["paths"]["nagios_plugins_dir"] = "/usr/lib/nagios/plugins"
-default["check_mk"]["server"]["paths"]["nagios_event_handlers_dir"] = "/usr/lib/nagios/plugins/eventhandlers"
 
 default["check_mk"]["nagios"]["extra_plugins"] = true
 default["check_mk"]["nagios"]["extra_plugins_package"] = "nagios-plugins-extra"

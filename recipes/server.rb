@@ -21,6 +21,7 @@ execute "check_mk install" do
   command "bash setup.sh --yes"
   cwd node["check_mk"]["build_path"]
   creates "/usr/share/check_mk/modules/check_mk.py"
+  environment node['check_mk']['server']['paths']
 end
 
 Check_MK::Discovery.register_server(node)
