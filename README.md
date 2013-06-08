@@ -28,7 +28,6 @@ Cookbooks
 ---------
 
 * [apache2](http://community.opscode.com/cookbooks/apache2)
-* cluster_service_discovery
 * [fewbytes-common](https://github.com/fewbytes-cookbooks/fewbytes-common)
 * [xinetd](http://community.opscode.com/cookbooks/xinetd)
 * [ark](https://github.com/opscode-cookbooks/ark)

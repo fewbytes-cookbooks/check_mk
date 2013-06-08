@@ -28,11 +28,7 @@ package "check-mk-agent" do
     
 end
 
-check_mk_servers = if Chef::Config[:solo]
-                    Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
-                  else
-                    search(:node, 'cluster_services:check-mk-server').map { |n| Check_MK::Discovery.relative_ipv4(n, node) }
-                  end
+check_mk_servers = Check_MK::Discovery.servers(node)
 
 template "/etc/xinetd.d/check_mk" do
   source "check_mk.xinetd.erb"
