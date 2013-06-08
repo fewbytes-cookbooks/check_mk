@@ -1,4 +1,4 @@
-include_recipe "source"
+include_recipe "ark"
 include_recipe "apache2"
 include_recipe "apache2::mod_proxy"
 include_recipe "apache2::mod_proxy_http"
@@ -8,19 +8,25 @@ include_recipe "check_mk::backend_nagios"
 
 cmk_package = node['check_mk']['server']['package']
 
-source_package "check_mk" do
-  source_type "tarball"
-  source cmk_package['url']
+ark "check_mk" do
+  url cmk_package['url']
   checksum cmk_package['checksum']
-  build_command "bash setup.sh --yes"
-  creates "/usr/share/check_mk/modules/check_mk.py"
   notifies :restart, "service[apache2]"
+  action :put
+  path ::File.dirname(node['check_mk']['build_path'])
+  creates "setup.sh"
+end
+
+execute "check_mk install" do 
+  command "bash setup.sh --yes"
+  cwd node["check_mk"]["build_path"]
+  creates "/usr/share/check_mk/modules/check_mk.py"
 end
 
 Check_MK::Discovery.register_server(node)
 
 if Chef::Config[:solo]
-  Chef::Log.warn("This recipe uses search. Chef Solo does not support save.")
+  Chef::Log.warn("This recipe uses node.save. Chef Solo does not support node.save, skipping")
 else
   node.save
 end
@@ -63,7 +69,7 @@ end
 
 # TODO: Find a better way to configure users
 sysadmins = if Chef::Config[:solo]
-              Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+              Chef::Log.warn("Would search for sysadmins in users data bag. Chef Solo does not support search, skipping")
               []
             else
               search(:users, 'groups:sysadmin OR (groups:check_mk AND groups:automation)')
@@ -106,7 +112,7 @@ pseudo_agents = []
 
 pseudo_agents_search =
   if Chef::Config[:solo]
-    Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+    Chef::Log.warn("Would search pseudo agents in check_mk data bag. Chef Solo does not support search, skipping")
     []
   else
     search(:check_mk, "usage:pseudo_agents AND chef_environment:#{node.chef_environment}")
@@ -132,7 +138,7 @@ external_agents = []
 
 external_agents_search =
   if Chef::Config[:solo]
-    Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+    Chef::Log.warn("Would search for external agents in the check_mk data bag. Chef Solo does not support search, skipping")
     []
   else
     search(:check_mk, "usage:external_agents AND chef_environment:#{node.chef_environment}")

@@ -35,9 +35,9 @@ module Check_MK
     end
 
     def register(node, service)
-      node.override['check_mk']['discovery']['provides'] ||= []
-      unless node['check_mk']['discovery']['provides'].includes?(service)
-        node.override['check_mk']['discovery']['provides'] += 'agent'
+      node.override['check_mk']['discovery']['provides'] = [] unless node.override['check_mk']['discovery']['provides'].is_a? Array
+      unless node['check_mk']['discovery']['provides'].include?(service)
+        node.override['check_mk']['discovery']['provides'] << service
       end
     end
 

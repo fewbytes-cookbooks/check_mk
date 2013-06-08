@@ -8,7 +8,7 @@ version          "1.0.0"
 
 depends "apache2"
 depends "xinetd"
-depends "source"
+depends "ark"
 depends "sudo"
 
 supports "ubuntu", ">= 10.04"
