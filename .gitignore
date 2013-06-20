@@ -9,3 +9,5 @@
 /test/kitchen/.kitchen
 .kitchen/
 .kitchen.local.yml
+*.iml
+.idea
