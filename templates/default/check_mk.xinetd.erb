@@ -25,7 +25,7 @@
 service check_mk
 {
   type           = UNLISTED
-  port           = 6556
+  port           = <%= node['check_mk']['agent']['port'] %>
   socket_type    = stream
   protocol       = tcp
   wait           = no
