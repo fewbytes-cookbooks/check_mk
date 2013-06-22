@@ -29,5 +29,8 @@ suites:
   run_list: ["recipe[check_mk::server]"]
   attributes: {}
 - name: agent
-  run_list: ["recipe[check_mk::agent]"]
+  run_list:
+    - recipe[check_mk::agent]
+    - recipe[minitest-handler]
+    # - recipe[check_mk_test]
   attributes: {}
