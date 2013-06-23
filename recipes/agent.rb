@@ -38,7 +38,13 @@ template "/etc/xinetd.d/check_mk" do
   variables(
     :only_from => check_mk_servers
   )
-  notifies :restart, "service[xinetd]"
+  case node['platform']
+    when 'ubuntu', 'debian'
+      notifies :stop, 'service[xinetd]'
+      notifies :start, 'service[xinetd]'
+    else
+      notifies :restart, 'service[xinetd]'
+  end
 end
 
 directory node['check_mk']['agent']['conf_dir'] do
