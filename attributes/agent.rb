@@ -6,9 +6,9 @@ default['check_mk']['agent']['port'] = 6556
 
 case platform
   when "debian", "ubuntu"
-    default["check_mk"]["agent"]["package"]["url"] = "http://mathias-kettner.de/download/check-mk-agent_1.2.2p1-2_all.deb"
-    default["check_mk"]["agent"]["package"]["checksum"] = "91f839624e6e75154655c8276e04cc9521256f43e0f2ac8528f588ddddbe9899"
+    default["check_mk"]["agent"]["package"]["url"] = "http://mathias-kettner.de/download/check-mk-agent_1.2.2p2-2_all.deb"
+    default["check_mk"]["agent"]["package"]["checksum"] = "40af3f35e541de1b55fa4122e8382e967ab56dfa438cf096377ffdd011649ef4"
   when "centos", "redhat", "amazon", "scientific"
-    default["check_mk"]["agent"]["package"]["url"] = "http://mathias-kettner.de/download/check_mk-agent-1.2.2p1-1.noarch.rpm"
-    default["check_mk"]["agent"]["package"]["checksum"] = "ee257b31841c1f33a5d14f2eb01128a6b1275c880b5f333e0e0130717353f7a6"
+    default["check_mk"]["agent"]["package"]["url"] = "http://mathias-kettner.de/download/check_mk-agent-1.2.2p2-1.noarch.rpm"
+    default["check_mk"]["agent"]["package"]["checksum"] = "03a163625043caa4d4208bd2e54a9402faf74a8a704a8ee43524af74b34c99fe"
 end
