@@ -259,8 +259,8 @@ Check_MK treats MRPE plugins like NRPE plugin, so any Nagios plugin can be used.
         arguments "-H 127.0.0.1 --foo bar"
     end
 
-Configuration variables
------------------------
+Configuration variables not yet implemented
+-------------------------------------------
 
 * agent_ports
 * dyndns_hosts
