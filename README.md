@@ -259,13 +259,6 @@ Check_MK treats MRPE plugins like NRPE plugin, so any Nagios plugin can be used.
         arguments "-H 127.0.0.1 --foo bar"
     end
 
-TODO
-====
-
-* Create a general purpose minimal nagios cookbook and remove backend_nagios recipe and its attributes from this cookbook.
-* Replace the cluster_service_discovery cookbook with fewbytes-cookbooks/service_discovery or silverware cookbook.
-* Build a proper test suite.
-
 Configuration variables
 -----------------------
 
