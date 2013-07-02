@@ -1,16 +1,3 @@
-GIT
-  remote: git://github.com/opscode/test-kitchen.git
-  revision: 77a76c687770b14843f3846bb8e5de3cb240ec59
-  specs:
-    test-kitchen (1.0.0.dev)
-      celluloid
-      mixlib-shellout
-      net-scp
-      net-ssh
-      pry
-      safe_yaml
-      thor
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -114,6 +101,14 @@ GEM
     slop (3.4.5)
     solve (0.4.4)
       json
+    test-kitchen (1.0.0.alpha.7)
+      celluloid
+      mixlib-shellout
+      net-scp
+      net-ssh
+      pry
+      safe_yaml
+      thor
     thor (0.18.1)
     timers (1.1.0)
     uuidtools (2.1.4)
@@ -135,4 +130,4 @@ PLATFORMS
 DEPENDENCIES
   berkshelf
   kitchen-vagrant
-  test-kitchen!
+  test-kitchen (~> 1.0.0.alpha)
