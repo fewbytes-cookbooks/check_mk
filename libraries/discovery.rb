@@ -39,15 +39,15 @@ module Check_MK
       end
     end
 
-    def cloud_location
-      case node["cloud"]["provider"]
+    def cloud_location(n)
+      case n["cloud"]["provider"]
         when "ec2"  #compare regions
-          node["ec2"]["placement_availability_zone"][/([a-z]{2}-[a-z]+-[0-9])[a-z]/,1]
+          n["ec2"]["placement_availability_zone"][/([a-z]{2}-[a-z]+-[0-9])[a-z]/,1]
         #when adding new multi-region cloud providers - add cases here
         when nil
           false
         else
-          node["cloud"]["provider"] #various single-region providers
+          n["cloud"]["provider"] #various single-region providers
       end rescue false # in case n["cloud"] is nil
     end
 

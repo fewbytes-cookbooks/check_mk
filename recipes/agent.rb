@@ -30,7 +30,7 @@ package "check-mk-agent" do
     
 end
 
-check_mk_servers = servers
+check_mk_servers = servers.map{|s| relative_ipv4(s, node)}
 
 template "/etc/xinetd.d/check_mk" do
   source "check_mk.xinetd.erb"
