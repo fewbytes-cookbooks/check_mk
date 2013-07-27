@@ -29,7 +29,7 @@ module Check_MK
     end
 
     def environments(node)
-      (node['check_mk']['scope'] || [node.chef_environment]).map do e
+      (node['check_mk']['scope'] || [node.chef_environment]).map do |e|
         "chef_environment:#{e}"
       end.join('OR')
     end
