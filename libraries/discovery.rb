@@ -1,47 +1,45 @@
 module Check_MK
   module Discovery
-    module_function
-
-    def register_agent(node)
-      register node, 'agent'
+    def register_agent
+      register 'agent'
     end
 
-    def register_server(node)
-      register node, 'server'
+    def register_server
+      register 'server'
     end
 
-    def agents(node)
+    def agents
       if Chef::Config[:solo]
         Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
         [node]
       else
-        search(:node, "check_mk_discovery_provides:agent AND (#{environments(node)})")
+        search(:node, "check_mk_discovery_provides:agent AND (#{environments})")
       end
     end
 
-    def servers(node)
+    def servers
       if Chef::Config[:solo]
         Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
         [node]
       else
-        search(:node, "check_mk_discovery_provides:server AND (#{environments(node)})")
+        search(:node, "check_mk_discovery_provides:server AND (#{environments})")
       end
     end
 
-    def environments(node)
+    def environments
       (node['check_mk']['scope'] || [node.chef_environment]).map do |e|
         "chef_environment:#{e}"
-      end.join('OR')
+      end.join(' OR ')
     end
 
-    def register(node, service)
+    def register(service)
       node.override['check_mk']['discovery']['provides'] = [] unless node.override['check_mk']['discovery']['provides'].is_a? Array
       unless node['check_mk']['discovery']['provides'].include?(service)
         node.override['check_mk']['discovery']['provides'] << service
       end
     end
 
-    def cloud_location(node)
+    def cloud_location
       case node["cloud"]["provider"]
         when "ec2"  #compare regions
           node["ec2"]["placement_availability_zone"][/([a-z]{2}-[a-z]+-[0-9])[a-z]/,1]

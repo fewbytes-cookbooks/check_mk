@@ -1,3 +1,5 @@
+extend ::Check_MK::Discovery
+
 include_recipe "ark"
 include_recipe "apache2"
 include_recipe "apache2::mod_proxy"
@@ -24,7 +26,7 @@ execute "check_mk install" do
   environment node['check_mk']['server']['paths']
 end
 
-Check_MK::Discovery.register_server(node)
+register_server
 
 if Chef::Config[:solo]
   Chef::Log.warn("This recipe uses node.save. Chef Solo does not support node.save, skipping")
@@ -107,7 +109,7 @@ end
 # Scope the selection, optionaly, from environments
 # Filter the returned hosts and reject those marked "ignored" (node['check_mk']['ignored'] = true)
 # Sort by fqdn
-agents = Check_MK::Discovery.agents(node).reject{|n| n['check_mk'] and n['check_mk']['ignored'] }.sort_by {|n| n['fqdn']}
+agents_nodes = agents.reject{|n| n['check_mk'] and n['check_mk']['ignored'] }.sort_by {|n| n['fqdn']}
 
 pseudo_agents = []
 
@@ -154,6 +156,7 @@ if external_agents_search.any?
   end.sort_by{|n| n['fqdn'] }
 end
 
+checkmk_servers = servers
 template node['check_mk']['server']['paths']['multisite_config_file'] do
   source "multisite.mk.erb"
   owner "root"
@@ -161,17 +164,18 @@ template node['check_mk']['server']['paths']['multisite_config_file'] do
   mode "0644"
   variables(
     :admin_users => sysadmins.map { |user| user['id'] },
-    :sites => Check_MK::Discovery.servers(node)
+    :sites => checkmk_servers
   )
 end
 
+check_mk_nodes = agents + pseudo_agents + external_agents
 template node['check_mk']['server']['paths']['main_config_file'] do
   source "main.mk.erb"
   owner "root"
   group "root"
   mode "0644"
   variables(
-    :nodes => agents + pseudo_agents + external_agents,
+    :nodes => check_mk_nodes,
     :server => node
   )
   notifies :run, "execute[inventorize-check_mk]"
