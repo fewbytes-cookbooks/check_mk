@@ -46,4 +46,6 @@ def read_mrpe_cfg
   ::File.open node['check_mk']['agent']['mrpe'] do |file|
     file.readlines
   end
+rescue
+  []
 end
