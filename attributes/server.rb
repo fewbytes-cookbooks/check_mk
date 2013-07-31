@@ -77,3 +77,7 @@ default["check_mk"]["server"]["paths"]["wato_snapshot_dir"] = ::File.join(check_
 
 default["check_mk"]["nagios"]["extra_plugins"] = true
 default["check_mk"]["nagios"]["extra_plugins_package"] = "nagios-plugins-extra"
+
+# for sudo
+include_attribute "sudo::default"
+default["authorization"]["sudo"]["include_sudoers_d"] = true
