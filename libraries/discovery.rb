@@ -75,7 +75,7 @@ module Check_MK
       search(*args)
     rescue Net::HTTPServerException => e
       if e.data.code_type == Net::HTTPNotFound
-        ::Chef::Log.warn(":check_mk data bag does not exist. Please create it.")
+        ::Chef::Log.warn("#{args.first} data bag does not exist. Please create it.")
         []
       else
         raise e
