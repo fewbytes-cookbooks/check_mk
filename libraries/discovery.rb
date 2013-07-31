@@ -70,5 +70,16 @@ module Check_MK
         dst["cloud"]["public_ipv4"]
       end
     end
+
+    def search_data_bag(*args)
+      search(*args)
+    rescue Net::HTTPServerException => e
+      if e.data.code_type == Net::HTTPNotFound
+        ::Chef::Log.warn(":check_mk data bag does not exist. Please create it.")
+        []
+      else
+        raise e
+      end
+    end
   end
 end

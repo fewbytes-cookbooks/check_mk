@@ -75,7 +75,7 @@ sysadmins = if Chef::Config[:solo]
               Chef::Log.warn("Would search for sysadmins in users data bag. Chef Solo does not support search, skipping")
               []
             else
-              search(:users, 'groups:sysadmin OR (groups:check_mk AND groups:automation)')
+              search_data_bag(:users, 'groups:sysadmin OR (groups:check_mk AND groups:automation)')
             end
 
 directory ::File.dirname(node['check_mk']['server']['paths']['htpasswd_file']) do
@@ -118,7 +118,7 @@ pseudo_agents_search =
     Chef::Log.warn("Would search pseudo agents in check_mk data bag. Chef Solo does not support search, skipping")
     []
   else
-    search(:check_mk, "usage:pseudo_agents AND chef_environment:#{node.chef_environment}")
+    search_data_bag(:check_mk, "usage:pseudo_agents AND chef_environment:#{node.chef_environment}")
   end
 
 if pseudo_agents_search.any?
@@ -144,7 +144,7 @@ external_agents_search =
     Chef::Log.warn("Would search for external agents in the check_mk data bag. Chef Solo does not support search, skipping")
     []
   else
-    search(:check_mk, "usage:external_agents AND chef_environment:#{node.chef_environment}")
+    search_data_bag(:check_mk, "usage:external_agents AND chef_environment:#{node.chef_environment}")
   end
 
 if external_agents_search.any?
