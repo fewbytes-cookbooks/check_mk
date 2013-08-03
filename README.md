@@ -1,3 +1,5 @@
+**Notice: Master branch is currently broken. Please use latest version tag 0.4.2**
+
 Description
 ===========
 

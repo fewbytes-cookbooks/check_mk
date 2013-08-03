@@ -1,5 +1,7 @@
 require 'uri'
 
+extend ::Check_MK::Discovery
+
 include_recipe "xinetd"
 
 cmk_package_uri = URI.parse(node['check_mk']['agent']['package']['url'])
@@ -28,7 +30,7 @@ package "check-mk-agent" do
     
 end
 
-check_mk_servers = Check_MK::Discovery.servers(node)
+check_mk_servers = servers.map{|s| relative_ipv4(s, node)}
 
 template "/etc/xinetd.d/check_mk" do
   source "check_mk.xinetd.erb"
@@ -54,7 +56,7 @@ directory node['check_mk']['agent']['conf_dir'] do
   mode "0755"
 end
 
-Check_MK::Discovery.register_agent(node)
+register_agent
 if Chef::Config[:solo]
   Chef::Log.warn("This recipe uses search. Chef Solo does not support save.")
 else
