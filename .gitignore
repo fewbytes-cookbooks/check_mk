@@ -11,3 +11,5 @@
 .kitchen.local.yml
 *.iml
 .idea
+Berksfile.lock
+Gemfile.lock
