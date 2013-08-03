@@ -7,6 +7,16 @@ default["check_mk"]["server"]["package"]["checksum"] = "3ef638c0de39b015e02e7d60
 default["check_mk"]["server"]["user"] = "nagios"
 default["check_mk"]["server"]["group"] = "nagios"
 
+default['check_mk']['server']['dir']['bin'] = '/usr/sbin'
+default['check_mk']['server']['dir']['conf'] = '/etc/check_mk'
+default['check_mk']['server']['dir']['share'] = '/usr/share/check_mk'
+default['check_mk']['server']['dir']['doc'] = '/usr/share/doc/check_mk'
+default['check_mk']['server']['dir']['checkman'] = '/usr/share/doc/check_mk/checks'
+default['check_mk']['server']['dir']['var'] = '/var/lib/check_mk'
+default['check_mk']['server']['dir']['lib'] = '/usr/lib/check_mk'
+default['check_mk']['server']['dir']['livebackends'] = '/usr/share/check_mk/livestatus'
+default['check_mk']['server']['dir']['pnp-templates'] = '/usr/share/check_mk/pnp-templates'
+
 default["check_mk"]["server"]["paths"]["modules_dir"] = "/usr/share/check_mk/modules"
 default["check_mk"]["server"]["paths"]["checks_dir"] = "/usr/share/check_mk/checks"
 default["check_mk"]["server"]["paths"]["agents_dir"] = "/usr/share/check_mk/agents"
