@@ -4,6 +4,9 @@ default['check_mk']['agent']['conf_dir'] = '/etc/check_mk'
 default['check_mk']['agent']['mrpe'] = '/etc/check_mk/mrpe.cfg'
 default['check_mk']['agent']['port'] = 6556
 
+default['check_mk']['agent']['dir']['lib'] = '/usr/lib/check_mk_agent'
+default['check_mk']['agent']['dir']['conf'] = '/etc/check_mk'
+
 case platform
   when "debian", "ubuntu"
     default["check_mk"]["agent"]["package"]["url"] = "http://mathias-kettner.de/download/check-mk-agent_1.2.2p2-2_all.deb"
