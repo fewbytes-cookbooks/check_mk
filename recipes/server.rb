@@ -4,7 +4,7 @@ include_recipe "apache2::mod_proxy"
 include_recipe "apache2::mod_proxy_http"
 include_recipe "apache2::mod_python"
 
-include_recipe "check_mk::backend_nagios"
+include_recipe "check_mk::nagios"
 
 cmk_package = node['check_mk']['server']['package']
 
@@ -12,16 +12,62 @@ ark "check_mk" do
   url cmk_package['url']
   checksum cmk_package['checksum']
   notifies :restart, "service[apache2]"
-  action :put
-  path ::File.dirname(node['check_mk']['build_path'])
   creates "setup.sh"
 end
 
-execute "check_mk install" do 
+# TODO: Find a better way to configure users
+sysadmins = if Chef::Config[:solo]
+              Chef::Log.warn("Would search for sysadmins in users data bag. Chef Solo does not support search, skipping")
+              []
+            else
+              search(:users, 'groups:sysadmin OR (groups:check_mk AND groups:automation)')
+            end
+
+file node['check_mk']['server']['paths']['htpasswd_file'] do
+  action :create
+  backup 5
+  owner node['check_mk']['server']['user']
+  group node['check_mk']['server']['group']
+  mode "0664"
+  content sysadmins.map{|u| "#{u['id']}:#{u['htpasswd']}"}.join("\n")
+end
+
+execute "check_mk make install" do 
   command "bash setup.sh --yes"
-  cwd node["check_mk"]["build_path"]
+  cwd "#{node['ark']['prefix_root']}/check_mk"
   creates "/usr/share/check_mk/modules/check_mk.py"
-  environment node['check_mk']['server']['paths']
+  environment ({'bindir' => node['check_mk']['server']['dir']['bin'],
+    'confdir' => node['check_mk']['server']['dir']['conf'],
+    'sharedir' => node['check_mk']['server']['dir']['share'],
+    'docdir' => node['check_mk']['server']['dir']['doc'],
+    'checkmandir' => node['check_mk']['server']['dir']['checkman'],
+    'vardir' => node['check_mk']['server']['dir']['var'],
+    'agentslibdir' => node['check_mk']['agent']['dir']['lib'],
+    'agentsconfdir' => node['check_mk']['agent']['dir']['conf'],
+    'nagiosuser' => node['check_mk']['nagios']['user'],
+    'wwwuser' => node['apache']['user'],
+    'wwwgroup' => node['apache']['group'],
+    'nagios_binary' => node['check_mk']['nagios']['path']['nagios'],
+    'nagios_config_file' => node['check_mk']['nagios']['path']['nagios.cfg'],
+    'nagconfdir' => node['check_mk']['nagios']['dir']['conf.d'],
+    'nagios_startscript' => ::File.join(node['check_mk']['nagios']['dir']['init.d'], 'nagios'),
+    'nagpipe' => node['check_mk']['nagios']['path']['nagios.cmd'],
+    'check_result_path' => node['check_mk']['nagios']['path']['checkresults'],
+    'nagios_status_file' => node['check_mk']['nagios']['path']['status.dat'],
+    'check_icmp_path' => ::File.join(node['check_mk']['nagios']['plugins']['dir']['bin'], 'check_icmp'),
+    'url_prefix' => '/',
+    'apache_config_dir' => node['apache']['dir'],
+    'htpasswd_file' => node['check_mk']['nagios']['path']['htpasswd'],
+    'nagios_auth_name' => 'Nagios Access',
+    'pnptemplates' => node['check_mk']['server']['dir']['pnp-templates'],
+    'rrd_path' => node['check_mk']['nagios']['dir']['rrd'],
+    'rrdcached_socket' => '/tmp/rrdcached.sock',
+    'enable_livestatus' => 'yes',
+    'libdir' => node['check_mk']['server']['dir']['lib'],
+    'livesock' => node["check_mk"]["server"]["paths"]["livestatus_unix_socket"],
+    'livebackendsdir' => ::File.join(node['check_mk']['server']['dir']['share'], 'livestatus'),
+    'enable_mkeventd' => 'no'
+  })
 end
 
 Check_MK::Discovery.register_server(node)
@@ -56,8 +102,7 @@ directory ::File.dirname(node['check_mk']['server']['paths']['livestatus_unix_so
   mode "0755"
   action :create
   recursive true
-  # TODO: Restart the backend, not nagios3
-  notifies :restart, "service[nagios3]"
+  notifies :restart, "service[nagios]"
 end
 
 # Enable www-data to control check_mk
@@ -66,31 +111,6 @@ sudo "www-data-check_mk-automation" do
   runas 'root'
   commands ['/usr/bin/check_mk --automation *']
   nopasswd true
-end
-
-# TODO: Find a better way to configure users
-sysadmins = if Chef::Config[:solo]
-              Chef::Log.warn("Would search for sysadmins in users data bag. Chef Solo does not support search, skipping")
-              []
-            else
-              search(:users, 'groups:sysadmin OR (groups:check_mk AND groups:automation)')
-            end
-
-directory ::File.dirname(node['check_mk']['server']['paths']['htpasswd_file']) do
-  action :create
-  owner node['check_mk']['server']['user']
-  group node['check_mk']['server']['group']
-  mode "0775"
-  recursive true
-end
-
-file node['check_mk']['server']['paths']['htpasswd_file'] do
-  action :create
-  backup 5
-  owner node['check_mk']['server']['user']
-  group node['check_mk']['server']['group']
-  mode "0664"
-  content sysadmins.map{|u| "#{u['id']}:#{u['htpasswd']}"}.join("\n")
 end
 
 template node['check_mk']['server']['paths']['apache_config_file'] do
@@ -183,4 +203,9 @@ end
 
 check_mk_user_macro "2" do
   value node["check_mk"]["server"]["paths"]["nagios_event_handlers_dir"]
+end
+
+service "nagios" do
+  supports :status => true, :restart => true, :reload => true
+  action [ :enable, :start ]
 end
