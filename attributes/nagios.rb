@@ -1,3 +1,5 @@
+include_attribute "check_mk::server"
+include_attribute "check_mk::pnp4nagios"
 default['check_mk']['nagios']['package']['url'] = 'http://sourceforge.net/projects/nagios/files/nagios-3.x/nagios-3.5.0/nagios-3.5.0.tar.gz'
 default['check_mk']['nagios']['package']['version'] = '3.5.0'
 default['check_mk']['nagios']['package']['checksum'] =
@@ -21,7 +23,7 @@ default['check_mk']['nagios']['dir']['run'] = '/var/run/nagios'
 default['check_mk']['nagios']['dir']['conf.d'] = ::File.join(node['check_mk']['nagios']['dir']['sysconf'], 'conf.d')
 default['check_mk']['nagios']['dir']['init.d'] = '/etc/init.d'
 default['check_mk']['nagios']['dir']['rrd'] = ::File.join(node['check_mk']['nagios']['dir']['localstate'], 'rrd')
-
+default['check_mk']['nagios']['dir']['objects'] = ::File.join(check_mk['nagios']['dir']['sysconf'], 'objects')
 # Web stuff
 default['check_mk']['nagios']['www']['html'] = '/nagios'
 default['check_mk']['nagios']['www']['cgi'] = '/cgi-bin/nagios'
@@ -45,6 +47,7 @@ default['check_mk']['nagios']['path']['checkresults'] = ::File.join(node['check_
 
 # Nagios binary path
 default['check_mk']['nagios']['path']['nagios'] = ::File.join(node['check_mk']['nagios']['dir']['bin'], 'nagios')
+default['check_mk']['nagios']['conf']['main']['object_cache_file'] = "/var/lib/nagios/objects.cache"
 
 # Parameters for nagios/cgi.cfg (http://nagios.sourceforge.net/docs/3_0/configcgi.html)
 #cgi_cfg = {
@@ -94,11 +97,29 @@ default['check_mk']['nagios']['conf']['cgi']['main_config_file'] = node['check_m
 default['check_mk']['nagios']['conf']['main']['log_file'] = ::File.join(node['check_mk']['nagios']['dir']['localstate'],
                                                                        'nagios.log')
 
-nagios_cfg = {
+default['check_mk']['nagios']['conf']['main']['cfg_dir'] = [check_mk['nagios']['dir']['conf.d']]
+default['check_mk']['nagios']['conf']['main']['illegal_macro_output_chars'] = '`~$&|'"<>"
+default['check_mk']['nagios']['conf']['main']['low_service_flap_threshold'] = 5.0
+default['check_mk']['nagios']['conf']['main']['high_service_flap_threshold'] = 20.0
+default['check_mk']['nagios']['conf']['main']['low_host_flap_threshold'] = 5.0
+default['check_mk']['nagios']['conf']['main']['high_host_flap_threshold'] = 20.0
+default['check_mk']['nagios']['conf']['main']['enable_flap_detection'] = 1
+default['check_mk']['nagios']['conf']['main']['date_format'] = 'iso8601'
+default['check_mk']['nagios']['conf']['main']['interval_length'] = 60
+default['check_mk']['nagios']['conf']['main']['process_performance_data'] = 1
+default['check_mk']['nagios']['conf']['main']['event_broker_options'] = -1
+default['check_mk']['nagios']['conf']['main']['cfg_file'] = %w(
+  contacts.cfg
+  localhost.cfg
+  templates.cfg
+  timeperiods.cfg
+  commands.cfg).map {|f| ::File.join(check_mk['nagios']['dir']['objects'], f)}
+default['check_mk']['nagios']['conf']['main']['resource_file'] = check_mk['nagios']['path']['resource.cfg']
+default['check_mk']['nagios']['conf']['main']['broker_module'] = [
+    "#{::File.join(check_mk['server']['dir']['lib'], "livestatus.o")} pnp_path=#{check_mk['pnp4nagios']['perfdata_dir']} #{check_mk["server"]["paths"]["livestatus_unix_socket"]}",
+    "#{check_mk['pnp4nagios']['npcd_broker_library']} config_file=#{check_mk['pnp4nagios']['npcd_config_file']}"
+  ]
   #cfg_file: [],
-  cfg_dir: [
-      default['check_mk']['nagios']['dir']['conf.d']
-  ],
   #object_cache_file: ::File.join(node['check_mk']['nagios']['dir']['var'], 'objects.cache'),
   #precached_object_file: ::File.join(node['check_mk']['nagios']['dir']['var'], 'objects.precache'),
   #resource_file: node['check_mk']['nagios']['path']['resource.cfg'],
@@ -143,13 +164,6 @@ nagios_cfg = {
   #log_passive_checks: 1,
   #global_host_event_handler: nil,
   #global_service_event_handler: nil,
-}
-
-nagios_cfg.each do |key, value|
-  unless value == nil
-    default['check_mk']['nagios']['conf']['main'][key] = value
-  end
-end
 
 # Nagios plugins
 default['check_mk']['nagios']['plugins']['url'] = 'http://sourceforge.net/projects/nagiosplug/files/nagiosplug/1.4.16/nagios-plugins-1.4.16.tar.gz'

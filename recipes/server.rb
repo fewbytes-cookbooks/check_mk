@@ -100,8 +100,8 @@ end
 
 directory ::File.dirname(node['check_mk']['server']['paths']['livestatus_unix_socket']) do
   owner node['check_mk']['server']['user']
-  group node['check_mk']['server']['group']
-  mode "0755"
+  group node['apache']['group']
+  mode "2755"
   action :create
   recursive true
   notifies :restart, "service[nagios]"

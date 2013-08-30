@@ -26,6 +26,20 @@ directory dir_etc do
   recursive true
 end
 
+directory node['check_mk']['nagios']['dir']['conf.d'] do
+  mode "0755"
+end
+
+directory node['check_mk']['nagios']['dir']['objects'] do
+  mode "0755"
+end
+
+%w(localhost.cfg templates.cfg timeperiods.cfg commands.cfg contacts.cfg).each do |nagios_file|
+  cookbook_file ::File.join(node['check_mk']['nagios']['dir']['objects'], nagios_file) do
+    mode "0755"
+  end
+end
+
 # Download and unpack
 ark 'nagios' do
   url node['check_mk']['nagios']['package']['url']
@@ -62,7 +76,7 @@ end
 execute 'nagios make all' do
   command 'make all'
   cwd "#{node['ark']['prefix_root']}/nagios"
-  creates 'base/nagios'
+  creates ::File.join(node['ark']['prefix_root'], 'nagios', 'base', 'nagios')
 end
 
 execute 'nagios make install' do
@@ -111,13 +125,21 @@ end
 # Compile and install
 execute 'nagios-plugins configure' do
   command "./configure --with-nagios-user=#{node['check_mk']['nagios']['user']} \
-    --with-nagios-group=#{node['check_mk']['nagios']['group']}"
+    --with-nagios-group=#{node['check_mk']['nagios']['group']} \
+    --mandir=#{node['check_mk']['nagios']['dir']['man']} \
+    --bindir=#{node['check_mk']['nagios']['dir']['bin']} \
+    --sbindir=#{node['check_mk']['nagios']['dir']['sbin']} \
+    --datadir=#{node['check_mk']['nagios']['dir']['data']} \
+    --sysconfdir=#{node['check_mk']['nagios']['dir']['sysconf']} \
+    --infodir=#{node['check_mk']['nagios']['dir']['info']} \
+    --libexecdir=#{node['check_mk']['nagios']['dir']['libexec']} \
+    --localstatedir=#{node['check_mk']['nagios']['dir']['localstate']}"
   cwd "#{node['ark']['prefix_root']}/nagios-plugins"
-  creates 'Makefile'
+  creates ::File.join(node['ark']['prefix_root'], 'nagios-plugins', 'Makefile')
 end
 
 execute 'nagios-plugins make and install' do
   command 'make && make install'
   cwd "#{node['ark']['prefix_root']}/nagios-plugins"
-  creates "#{node['check_mk']['nagios']['plugins']['dir']['libexec']}/check_icmp"
+  creates File.join(node['check_mk']['nagios']['dir']['libexec'], "check_icmp")
 end
