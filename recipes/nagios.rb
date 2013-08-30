@@ -56,7 +56,7 @@ execute 'nagios configure' do
     --with-htmurl=#{node['check_mk']['nagios']['www']['html']} \
     --with-cgiurl=#{node['check_mk']['nagios']['www']['cgi']}"
   cwd "#{node['ark']['prefix_root']}/nagios"
-  creates 'Makefile'
+  creates ::File.join(node['ark']['prefix_root'], 'nagios', 'Makefile')
 end
 
 execute 'nagios make all' do
