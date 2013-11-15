@@ -10,7 +10,7 @@ module Check_MK
 
     def agents
       if Chef::Config[:solo]
-        Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+        Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
         [node]
       else
         search(:node, "check_mk_discovery_provides:agent AND (#{environments})")
@@ -19,7 +19,7 @@ module Check_MK
 
     def servers
       if Chef::Config[:solo]
-        Chef::Log.warn("This recipe uses search. Chef Solo does not support search.")
+        Chef::Log.warn('This recipe uses search. Chef Solo does not support search.')
         [node]
       else
         search(:node, "check_mk_discovery_provides:server AND (#{environments})")
@@ -40,34 +40,34 @@ module Check_MK
     end
 
     def cloud_location(n)
-      case n["cloud"]["provider"]
-        when "ec2"  #compare regions
-          n["ec2"]["placement_availability_zone"][/([a-z]{2}-[a-z]+-[0-9])[a-z]/,1]
-        #when adding new multi-region cloud providers - add cases here
+      case n['cloud']['provider']
+        when 'ec2'  # compare regions
+          n['ec2']['placement_availability_zone'][/([a-z]{2}-[a-z]+-[0-9])[a-z]/, 1]
+        # when adding new multi-region cloud providers - add cases here
         when nil
           false
         else
-          n["cloud"]["provider"] #various single-region providers
+          n['cloud']['provider'] # various single-region providers
       end rescue false # in case n["cloud"] is nil
     end
 
     def relative_hostname(dst, src)
       if not cloud_location(dst)
-        dst["hostname"]
+        dst['hostname']
       elsif cloud_location(dst) == cloud_location(src)
-        dst["cloud"]["local_hostname"]
+        dst['cloud']['local_hostname']
       else
-        dst["cloud"]["public_hostname"]
+        dst['cloud']['public_hostname']
       end
     end
 
     def relative_ipv4(dst, src)
       if not cloud_location(dst)
-        dst["ipaddress"]
+        dst['ipaddress']
       elsif cloud_location(dst) == cloud_location(src)
-        dst["cloud"]["local_ipv4"]
+        dst['cloud']['local_ipv4']
       else
-        dst["cloud"]["public_ipv4"]
+        dst['cloud']['public_ipv4']
       end
     end
 

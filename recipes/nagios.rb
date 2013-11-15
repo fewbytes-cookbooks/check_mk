@@ -21,22 +21,22 @@ dir_etc = node['check_mk']['nagios']['dir']['sysconf']
 directory dir_etc do
   owner node['check_mk']['nagios']['user']
   group node['check_mk']['nagios']['group']
-  mode "0755"
+  mode '0755'
   action :create
   recursive true
 end
 
 directory node['check_mk']['nagios']['dir']['conf.d'] do
-  mode "0755"
+  mode '0755'
 end
 
 directory node['check_mk']['nagios']['dir']['objects'] do
-  mode "0755"
+  mode '0755'
 end
 
 %w(localhost.cfg templates.cfg timeperiods.cfg commands.cfg contacts.cfg).each do |nagios_file|
   cookbook_file ::File.join(node['check_mk']['nagios']['dir']['objects'], nagios_file) do
-    mode "0755"
+    mode '0755'
   end
 end
 
@@ -89,7 +89,7 @@ end
 execute 'nagios make install-init' do
   command 'make install-init'
   cwd "#{node['ark']['prefix_root']}/nagios"
-  not_if { ::File.exist?("/etc/init.d/nagios") }
+  not_if { ::File.exist?('/etc/init.d/nagios') }
 end
 
 directory dir_etc do
@@ -141,5 +141,5 @@ end
 execute 'nagios-plugins make and install' do
   command 'make && make install'
   cwd "#{node['ark']['prefix_root']}/nagios-plugins"
-  creates File.join(node['check_mk']['nagios']['dir']['libexec'], "check_icmp")
+  creates File.join(node['check_mk']['nagios']['dir']['libexec'], 'check_icmp')
 end
