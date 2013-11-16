@@ -9,9 +9,9 @@ default['check_mk']['agent']['dir']['conf'] = '/etc/check_mk'
 
 case platform
   when 'debian', 'ubuntu'
-    default['check_mk']['agent']['package']['url'] = 'http://mathias-kettner.de/download/check-mk-agent_1.2.2p2-2_all.deb'
-    default['check_mk']['agent']['package']['checksum'] = '40af3f35e541de1b55fa4122e8382e967ab56dfa438cf096377ffdd011649ef4'
+    default['check_mk']['agent']['package']['url'] = 'http://mathias-kettner.de/download/check-mk-agent_1.2.2p3-2_all.deb'
+    default['check_mk']['agent']['package']['checksum'] = '28394424ba756ba306f1a65f520ff0a5c4cd6e85f52be68bf4857d4c9306cff3'
   when 'centos', 'redhat', 'amazon', 'scientific'
-    default['check_mk']['agent']['package']['url'] = 'http://mathias-kettner.de/download/check_mk-agent-1.2.2p2-1.noarch.rpm'
-    default['check_mk']['agent']['package']['checksum'] = '03a163625043caa4d4208bd2e54a9402faf74a8a704a8ee43524af74b34c99fe'
+    default['check_mk']['agent']['package']['url'] = 'http://mathias-kettner.de/download/check_mk-agent-1.2.2p3-1.noarch.rpm'
+    default['check_mk']['agent']['package']['checksum'] = '6112d23c7282168945bfda930e7c27c00fa979d5f3f45f3225e14850f5e5f369'
 end
