@@ -1,8 +1,8 @@
 default["check_mk"]["server"]["package"]["name"] = "check_mk"
-default["check_mk"]["server"]["package"]["version"] = "1.2.2p2"
-default["check_mk"]["server"]["package"]["filename"] = "check_mk-1.2.2p2.tar.gz"
-default["check_mk"]["server"]["package"]["url"] = "http://mathias-kettner.de/download/check_mk-1.2.2p2.tar.gz"
-default["check_mk"]["server"]["package"]["checksum"] = "3ef638c0de39b015e02e7d60c0d612c0fcf516a7e4766ab836dc205d7330b15f"
+default["check_mk"]["server"]["package"]["version"] = "1.2.2p3"
+default["check_mk"]["server"]["package"]["filename"] = "check_mk-1.2.2p3.tar.gz"
+default["check_mk"]["server"]["package"]["url"] = "http://mathias-kettner.de/download/check_mk-1.2.2p3.tar.gz"
+default["check_mk"]["server"]["package"]["checksum"] = "c5b20d56ff96634886feb46ef189f0779c2337a42cdf7907d810cb0bb35949aa"
 
 default["check_mk"]["server"]["user"] = "nagios"
 default["check_mk"]["server"]["group"] = "nagios"
