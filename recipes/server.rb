@@ -188,7 +188,7 @@ template node['check_mk']['server']['paths']['multisite_config_file'] do
   )
 end
 
-check_mk_nodes = agents + pseudo_agents + external_agents
+check_mk_nodes = agents_nodes + pseudo_agents + external_agents
 template node['check_mk']['server']['paths']['main_config_file'] do
   source "main.mk.erb"
   owner "root"
