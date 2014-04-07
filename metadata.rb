@@ -4,7 +4,7 @@ maintainer_email "chef@fewbytes.com"
 license          "All rights reserved"
 description      "Installs/Configures Check_MK"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "1.0.1"
+version          "1.0.2"
 
 depends "apache2"
 depends "php"
