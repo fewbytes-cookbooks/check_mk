@@ -166,8 +166,8 @@ default['check_mk']['nagios']['conf']['main']['broker_module'] = [
   #global_service_event_handler: nil,
 
 # Nagios plugins
-default['check_mk']['nagios']['plugins']['url'] = 'https://www.nagios-plugins.org/download/nagios-plugins-1.4.16.tar.gz'
-default['check_mk']['nagios']['plugins']['version'] = '1.4.16'
-default['check_mk']['nagios']['plugins']['checksum'] = 'b0caf07e0084e9b7f10fdd71cbd3ebabcd85ad78df64da360b51233b0e73b2bd'
+default['check_mk']['nagios']['plugins']['url'] = 'http://nagios-plugins.org/download/nagios-plugins-2.0.3.tar.gz'
+default['check_mk']['nagios']['plugins']['version'] = '2.0.3'
+default['check_mk']['nagios']['plugins']['checksum'] = '8f0021442dce0138f0285ca22960b870662e28ae8973d49d439463588aada04a'
     
 default['check_mk']['nagios']['plugins']['dir']['bin'] = '/usr/local/nagios/bin'

@@ -3,10 +3,18 @@ driver_plugin: vagrant
 
 driver_config:
   require_chef_omnibus: true
-  #use_vagrant_provision: true
-#  require_chef_omnibus: 10.26.0
+
+provisioner:
+  name: chef_zero
+  data_bags_path: test/chef_repo/data_bags
 
 platforms:
+- name: ubuntu-14.04
+  driver_config:
+    box: opscode-ubuntu-14.04
+    box_url: https://opscode-vm.s3.amazonaws.com/vagrant/opscode_ubuntu-14.04_provisionerless.box
+  run_list:
+  - recipe[apt]
 - name: ubuntu-13.04
   driver_config:
     box: opscode-ubuntu-13.04
@@ -44,5 +52,4 @@ suites:
   run_list:
     - recipe[check_mk::agent]
     - recipe[minitest-handler]
-    # - recipe[check_mk_test]
   attributes: {}

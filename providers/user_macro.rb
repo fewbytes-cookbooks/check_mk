@@ -43,5 +43,5 @@ end
 def read_resources_cfg
   ::File.open node["check_mk"]["server"]["paths"]["nagios_resource_file"] do |file|
     file.readlines
-  end
+  end rescue [""]
 end
