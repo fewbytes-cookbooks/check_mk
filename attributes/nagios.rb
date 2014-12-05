@@ -23,7 +23,7 @@ default['check_mk']['nagios']['dir']['run'] = '/var/run/nagios'
 default['check_mk']['nagios']['dir']['conf.d'] = ::File.join(node['check_mk']['nagios']['dir']['sysconf'], 'conf.d')
 default['check_mk']['nagios']['dir']['init.d'] = '/etc/init.d'
 default['check_mk']['nagios']['dir']['rrd'] = ::File.join(node['check_mk']['nagios']['dir']['localstate'], 'rrd')
-default['check_mk']['nagios']['dir']['objects'] = ::File.join(check_mk['nagios']['dir']['sysconf'], 'objects')
+default['check_mk']['nagios']['dir']['objects'] = ::File.join(node['check_mk']['nagios']['dir']['sysconf'], 'objects')
 # Web stuff
 default['check_mk']['nagios']['www']['html'] = '/nagios'
 default['check_mk']['nagios']['www']['cgi'] = '/cgi-bin/nagios'
@@ -97,7 +97,7 @@ default['check_mk']['nagios']['conf']['cgi']['main_config_file'] = node['check_m
 default['check_mk']['nagios']['conf']['main']['log_file'] = ::File.join(node['check_mk']['nagios']['dir']['localstate'],
                                                                        'nagios.log')
 
-default['check_mk']['nagios']['conf']['main']['cfg_dir'] = [check_mk['nagios']['dir']['conf.d']]
+default['check_mk']['nagios']['conf']['main']['cfg_dir'] = [node['check_mk']['nagios']['dir']['conf.d']]
 default['check_mk']['nagios']['conf']['main']['illegal_macro_output_chars'] = '`~$&|'"<>"
 default['check_mk']['nagios']['conf']['main']['low_service_flap_threshold'] = 5.0
 default['check_mk']['nagios']['conf']['main']['high_service_flap_threshold'] = 20.0
@@ -113,11 +113,11 @@ default['check_mk']['nagios']['conf']['main']['cfg_file'] = %w(
   localhost.cfg
   templates.cfg
   timeperiods.cfg
-  commands.cfg).map {|f| ::File.join(check_mk['nagios']['dir']['objects'], f)}
-default['check_mk']['nagios']['conf']['main']['resource_file'] = check_mk['nagios']['path']['resource.cfg']
+  commands.cfg).map {|f| ::File.join(node['check_mk']['nagios']['dir']['objects'], f)}
+default['check_mk']['nagios']['conf']['main']['resource_file'] = node['check_mk']['nagios']['path']['resource.cfg']
 default['check_mk']['nagios']['conf']['main']['broker_module'] = [
-    "#{::File.join(check_mk['server']['dir']['lib'], "livestatus.o")} pnp_path=#{check_mk['pnp4nagios']['perfdata_dir']} #{check_mk["server"]["paths"]["livestatus_unix_socket"]}",
-    "#{check_mk['pnp4nagios']['npcd_broker_library']} config_file=#{check_mk['pnp4nagios']['npcd_config_file']}"
+    "#{::File.join(node['check_mk']['server']['dir']['lib'], "livestatus.o")} pnp_path=#{node['check_mk']['pnp4nagios']['perfdata_dir']} #{node['check_mk']["server"]["paths"]["livestatus_unix_socket"]}",
+    "#{node['check_mk']['pnp4nagios']['npcd_broker_library']} config_file=#{node['check_mk']['pnp4nagios']['npcd_config_file']}"
   ]
   #cfg_file: [],
   #object_cache_file: ::File.join(node['check_mk']['nagios']['dir']['var'], 'objects.cache'),

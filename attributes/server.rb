@@ -80,9 +80,9 @@ default["check_mk"]["server"]["paths"]["nagios_command_pipe_path"] = "/var/log/n
 default["check_mk"]["server"]["paths"]["check_result_path"] = "/var/lib/nagios3/spool/checkresults"
 default["check_mk"]["server"]["paths"]["livestatus_unix_socket"] = "/var/log/nagios/rw/live"
 
-default["check_mk"]["server"]["paths"]["main_config_file"] = ::File.join(check_mk["server"]["paths"]["default_config_dir"], "main.mk")
-default["check_mk"]["server"]["paths"]["multisite_config_file"] = ::File.join(check_mk["server"]["paths"]["default_config_dir"], "multisite.mk")
-default["check_mk"]["server"]["paths"]["wato_snapshot_dir"] = ::File.join(check_mk["server"]["paths"]["var_dir"], "wato", "snapshots")
+default["check_mk"]["server"]["paths"]["main_config_file"] = ::File.join(node['check_mk']["server"]["paths"]["default_config_dir"], "main.mk")
+default["check_mk"]["server"]["paths"]["multisite_config_file"] = ::File.join(node['check_mk']["server"]["paths"]["default_config_dir"], "multisite.mk")
+default["check_mk"]["server"]["paths"]["wato_snapshot_dir"] = ::File.join(node['check_mk']["server"]["paths"]["var_dir"], "wato", "snapshots")
 
 
 default["check_mk"]["nagios"]["extra_plugins"] = true
