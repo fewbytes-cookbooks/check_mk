@@ -10,7 +10,7 @@ default['check_mk']['agent']['dir']['conf'] = '/etc/check_mk'
 case platform
   when "debian", "ubuntu"
     default["check_mk"]["agent"]["package"]["url"] = "http://mathias-kettner.de/download/check-mk-agent_1.2.4p3-2_all.deb"
-    default["check_mk"]["agent"]["package"]["checksum"] = "127fae672cd6c0ceb61a994460216e8f5e6e30d05e293319ca4f45ebd291219b"
+    default["check_mk"]["agent"]["package"]["checksum"] = "a51d855a1165dd2924fb4042ef071cfe27a6f7b11818e240bab51a3125ef92ec"
   when "centos", "redhat", "amazon", "scientific"
     default["check_mk"]["agent"]["package"]["url"] = "http://mathias-kettner.de/download/check_mk-agent-1.2.4p3-1.noarch.rpm"
     default["check_mk"]["agent"]["package"]["checksum"] = "8d9d591e03c8bcce63564ee59fb2317977a473a589e61f803d6b58c4d067cea9"
